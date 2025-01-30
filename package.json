@@ -1,0 +1,41 @@
+{
+  "name": "yoshida",
+  "version": "1.0.0",
+  "description": "simple wa bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --max-old-space-size=2048 index.js",
+    "pm2": "pm2 start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuurahz/yoshida.git"
+  },
+  "keywords": [
+    "wb",
+    "bot"
+  ],
+  "author": "yuurahz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yuurahz/yoshida/issues"
+  },
+  "homepage": "https://github.com/yuurahz/yoshida#readme",
+  "dependencies": {
+    "@yoshx/func": "^0.0.4",
+    "awesome-phonenumber": "^7.2.0",
+    "baileys": "^6.7.9",
+    "child_process": "^1.0.2",
+    "form-data": "^4.0.1",
+    "link-preview-js": "^3.0.12",
+    "module-alias": "^2.2.3",
+    "node-cron": "^3.0.3",
+    "node-webpmux": "^3.2.0",
+    "pino": "^9.6.0",
+    "syntax-error": "1.4.0"
+  },
+  "_moduleAliases": {
+    "@library": "library",
+    "@system": "system"
+  }
+}
