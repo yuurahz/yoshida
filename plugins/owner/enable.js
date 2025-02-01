@@ -154,7 +154,7 @@ module.exports = {
         }
         break;
       default:
-        let opt = `乂  *O P T I O N*\n${isOwner ? "\n" + o.map((v) => "  ◦  " + v).join`\n` : ""}${m.isGroup ? "\n" + g.map((v) => "  ◦  " + v).join`\n` : ""}\n\n${process.env.FOOTER}`;
+        let opt = `乂  *O P T I O N*\n${isOwner ? "\n" + o.map((v) => "  ◦  " + v).join`\n` : ""}${m.isGroup ? "\n" + g.map((v) => "  ◦  " + v).join`\n` : ""}\n\n${footer}`;
         if (!/[01]/.test(m.command)) return m.reply(opt);
     }
     m.reply(

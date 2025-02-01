@@ -9,12 +9,12 @@ module.exports = {
     }
     let jids = [
       ...new Set([
-        ...(m.mentionedJid || []),
+        ...(m.mentions || []),
         ...(m.quoted ? [m.quoted.sender] : []),
       ]),
     ];
     for (let jid of jids) {
-      let user = db.data.users[jid];
+      let user = db.users[jid];
       if (!user) continue;
       let afkTime = user.afk;
       if (!afkTime || afkTime < 0) continue;

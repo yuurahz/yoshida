@@ -2,9 +2,9 @@ module.exports = {
   before: async (m, { conn, users }) => {
     if (!m.isGroup || m.chat.endsWith("broadcast") || users.banned || m.isBot)
       return;
-    if (!(m.body in db.data.msgs)) return;
+    if (!(m.body in db.msgs)) return;
     let _m = await conn.serialize(
-      JSON.parse(JSON.stringify(db.data.msgs[m.body]), (_, v) =>
+      JSON.parse(JSON.stringify(db.msgs[m.body]), (_, v) =>
         null !== v &&
         "object" == typeof v &&
         "type" in v &&

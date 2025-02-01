@@ -1,7 +1,7 @@
 module.exports = (m) => {
   let isNumber = (x) => typeof x === "number" && !isNaN(x);
-  let user = db.data.users[m.sender];
-  if (typeof user !== "object") db.data.users[m.sender] = {};
+  let user = db.users[m.sender];
+  if (typeof user !== "object") db.users[m.sender] = {};
   if (user) {
     if (!isNumber(user.exp)) user.exp = 100;
     if (!isNumber(user.limit)) user.limit = process.env.LIMIT;
@@ -32,7 +32,7 @@ module.exports = (m) => {
     if (!isNumber(user.lastseen)) user.lastseen = 0;
     if (!("activity" in user)) user.activity = {};
   } else {
-    db.data.users[m.sender] = {
+    db.users[m.sender] = {
       exp: 100,
       limit: process.env.LIMIT,
       joinlimit: 1,
@@ -61,8 +61,8 @@ module.exports = (m) => {
   }
 
   if (m.isGroup) {
-    let group = db.data.groups[m.chat];
-    if (typeof group !== "object") db.data.groups[m.chat] = {};
+    let group = db.groups[m.chat];
+    if (typeof group !== "object") db.groups[m.chat] = {};
     if (group) {
       if (!isNumber(group.activity)) group.activity = 0;
       if (!isNumber(group.expired)) group.expired = 0;
@@ -77,7 +77,7 @@ module.exports = (m) => {
       if (!("stay" in group)) group.stay = false;
       if (!("member" in group)) group.member = {};
     } else {
-      db.data.groups[m.chat] = {
+      db.groups[m.chat] = {
         activity: 0,
         expired: 0,
         sWelcome: "",
@@ -94,22 +94,22 @@ module.exports = (m) => {
     }
   }
 
-  let chat = db.data.chats[m.chat];
-  if (typeof chat !== "object") db.data.chats[m.chat] = {};
+  let chat = db.chats[m.chat];
+  if (typeof chat !== "object") db.chats[m.chat] = {};
   if (chat) {
     if (!isNumber(chat.chat)) chat.chat = 0;
     if (!isNumber(chat.lastchat)) chat.lastchat = 0;
     if (!isNumber(chat.command)) chat.command = 0;
   } else {
-    db.data.chats[m.chat] = {
+    db.chats[m.chat] = {
       chat: 0,
       lastchat: 0,
       command: 0,
     };
   }
 
-  let setting = db.data.setting;
-  if (typeof setting !== "object") db.data.setting = {};
+  let setting = db.setting;
+  if (typeof setting !== "object") db.setting = {};
   if (setting) {
     if (!isNumber(setting.style)) setting.style = 0;
     if (!isNumber(setting.lastreset)) setting.lastreset = new Date() * 1;
@@ -132,7 +132,7 @@ module.exports = (m) => {
       setting.msg =
         "Hi +tag. I am an automated system (WhatsApp Bot) that can help to do something, search and get data / information only through WhatsApp.\n\n◦ *Database* : +db\n◦ *Library* : Baileys\n\nIf you find an error or want to upgrade premium plan contact the owner.";
   } else {
-    db.data.setting = {
+    db.setting = {
       style: 0,
       lastreset: new Date() * 1,
       autoread: true,

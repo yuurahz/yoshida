@@ -8,11 +8,11 @@ module.exports = {
     else who = m.args[1];
     var jumlahHari = 86400000 * m.args[0];
     var now = new Date() * 1;
-    if (now < global.db.data.groups[who].expired)
-      db.data.groups[who].expired += jumlahHari;
-    else db.data.groups[who].expired = now + jumlahHari;
+    if (now < global.db.groups[who].expired)
+      db.groups[who].expired += jumlahHari;
+    else db.groups[who].expired = now + jumlahHari;
     m.reply(
-      `successfully set the expiration date for ${await conn.getName(who)} for ${m.args[0]} days\n\nCountdown : ${Func.toDate(db.data.groups[who].expired - now)}`,
+      `successfully set the expiration date for ${await conn.getName(who)} for ${m.args[0]} days\n\nCountdown : ${Func.toDate(db.groups[who].expired - now)}`,
     );
   },
   owner: true,

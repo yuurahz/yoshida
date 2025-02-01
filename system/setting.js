@@ -1,8 +1,9 @@
 const { Function: Func, Color } = new (require("@yoshx/func"))();
 const fs = require("fs");
 
-/* uploader */
+/* idk */
 global.upload = require("@library/uploader");
+global.footer = Func.Styles("© yoshida-bot");
 
 /* message */
 global.mess = Object.freeze({

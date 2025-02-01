@@ -53,7 +53,7 @@ module.exports = {
       if (setting.style === 1) {
         m.reply({
           text: list,
-          footer: process.env.FOOTER,
+          footer,
           buttons: [
             {
               buttonId: m.prefix + "run",
@@ -101,7 +101,7 @@ module.exports = {
       if (setting.style === 1) {
         m.reply({
           text: messages,
-          footer: process.env.FOOTER,
+          footer,
           buttons: [
             {
               buttonId: `${m.prefix + m.command} all`,
@@ -149,7 +149,7 @@ module.exports = {
       if (setting.style === 1) {
         m.reply({
           text: kabeh,
-          footer: process.env.FOOTER,
+          footer,
           buttons: [
             {
               buttonId: `${m.prefix + m.command}`,

@@ -25,8 +25,8 @@ module.exports = {
     }
 
     try {
-      if (who.endsWith("g.us")) db.data.groups[who].isBanned = true;
-      else db.data.users[who].banned = true;
+      if (who.endsWith("g.us")) db.groups[who].isBanned = true;
+      else db.users[who].banned = true;
       m.reply(
         `Successfully banned! ${await conn.user.name} inactive on chat ${(await conn.getName(who)) == undefined ? "this" : await conn.getName(who)}.`,
       );

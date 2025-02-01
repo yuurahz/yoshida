@@ -17,11 +17,11 @@ const { JSONFile } = lowdb;
 const { loadPlugins, watchPlugins } = Plugins;
 
 (async () => {
-  global.db = /mongo/.test(process.env.DATABASE_STATE)
+  const database = /mongo/.test(process.env.DATABASE_STATE)
     ? new MongoDB(process.env.DATABASE_URL)
     : new JSONFile(process.env.DATABASE_NAME + ".json");
 
-  global.db.data = {
+  global.db = {
     users: {},
     groups: {},
     chats: {},
@@ -29,8 +29,8 @@ const { loadPlugins, watchPlugins } = Plugins;
     stats: {},
     msgs: {},
   };
-  await db.read();
-  db.write(db.data);
+  await database.read();
+  database.write(db);
 })();
 
 /** connect to websocket */
@@ -216,8 +216,8 @@ async function connectWA() {
   conn.ev.on(
     "group-participants.update",
     async ({ id, participants, action }) => {
-      if (db.data.setting.self_mode) return;
-      let group = db.data.groups[id] || {};
+      if (db.setting.self_mode) return;
+      let group = db.groups[id] || {};
       switch (action) {
         case "add":
         case "remove":
@@ -310,7 +310,7 @@ async function connectWA() {
 
   /** save database every 30 seconds */
   setInterval(async () => {
-    if (db) await db.write(db.data);
+    if (database) await db.write(db);
   }, 60_000);
 
   /** load plugins directory */

@@ -16,13 +16,13 @@ module.exports = {
       let jid = conn.decodeJid(p[0].jid);
       let number = jid.replace(/@.+/, "");
       if (command == "+owner") {
-        let owners = db.data.setting.owners;
+        let owners = db.setting.owners;
         if (owners.includes(number))
           return m.reply(Func.texted("bold", `Target is already the owner.`));
         owners.push(number);
         m.reply(Func.texted("bold", `Successfully added @${number} as owner.`));
       } else if (command == "-owner") {
-        let owners = db.data.setting.owners;
+        let owners = db.setting.owners;
         if (!owners.includes(number))
           return m.reply(Func.texted("bold", `Target is not owner.`));
         owners.forEach((data, index) => {
@@ -35,7 +35,7 @@ module.exports = {
           ),
         );
       } else if (command == "-prem") {
-        let data = db.data.users[jid];
+        let data = db.users[jid];
         if (typeof data == "undefined")
           return m.reply(Func.texted("bold", `Can't find user data.`));
         if (!data.premium)

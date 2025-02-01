@@ -23,21 +23,21 @@ module.exports = {
               : Math.min(1, count);
         switch (type) {
           case "exp":
-            if (typeof db.data.users[who] == "undefined")
+            if (typeof db.users[who] == "undefined")
               return m.reply("The user does not exist in the database");
-            db.data.users[who].exp += count * 1;
+            db.users[who].exp += count * 1;
             m.reply(`Added successfully ${count * 1} ${type}`);
             break;
           case "money":
-            if (typeof db.data.users[who] == "undefined")
+            if (typeof db.users[who] == "undefined")
               return m.reply("The user does not exist in the database");
-            db.data.users[who].money += count * 1;
+            db.users[who].money += count * 1;
             m.reply(`Added successfully ${count * 1} ${type}`);
             break;
           case "limit":
-            if (typeof db.data.users[who] == "undefined")
+            if (typeof db.users[who] == "undefined")
               return m.reply("The user does not exist in the database");
-            db.data.users[who].limit += count * 1;
+            db.users[who].limit += count * 1;
             m.reply(`Added successfully ${count * 1} ${type}`);
             break;
           default:

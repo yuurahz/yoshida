@@ -12,8 +12,8 @@
     "url": "git+https://github.com/yuurahz/yoshida.git"
   },
   "keywords": [
-    "wb",
-    "bot"
+    "yoshida",
+    "base-bot"
   ],
   "author": "yuurahz",
   "license": "MIT",

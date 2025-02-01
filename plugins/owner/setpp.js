@@ -2,13 +2,12 @@ const { S_WHATSAPP_NET } = require("baileys");
 
 module.exports = {
   command: /^(setpp)$/i,
-  run: async (m, { Func, conn }) => {
+  run: async (m, { Func, quoted, conn }) => {
     try {
-      let q = m.isQuoted ? m.quoted : m;
-      let mime = (q.msg || q).mimetype || "";
+      let mime = (quoted.msg || quoted).mimetype || "";
       if (/image\/(jpe?g|png)/.test(mime)) {
         m.react("⏱️");
-        const buffer = await conn.downloadMediaMessage(q.message);
+        const buffer = await quoted.download();
         const { img } = await Func.generateProfilePicture(buffer);
         await conn
           .query({

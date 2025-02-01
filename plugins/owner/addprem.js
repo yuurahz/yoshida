@@ -10,7 +10,7 @@ module.exports = {
         return m.reply(Func.texted("bold", `Day must be a number.`));
       let days = m.args[0] ? parseInt(m.args[0]) : 30;
       let jid = conn.decodeJid(m.quoted.sender);
-      let users = db.data.users[jid];
+      let users = db.users[jid];
       users.expired += users.premium
         ? 86400000 * days
         : new Date() * 1 + 86400000 * days;
@@ -31,7 +31,7 @@ module.exports = {
         return m.reply(Func.texted("bold", `Day must be a number.`));
       let days = m.args[1] ? parseInt(m.args[1]) : 30;
       let jid = conn.decodeJid(m.mentions[0]);
-      const users = db.data.users[jid];
+      const users = db.users[jid];
       users.expired += users.premium
         ? 86400000 * days
         : new Date() * 1 + 86400000 * days;
@@ -58,7 +58,7 @@ module.exports = {
         return m.reply(Func.texted("bold", `Day must be a number.`));
       let days = day ? parseInt(day) : 30;
       let jid = conn.decodeJid(p.jid);
-      const users = db.data.users[jid];
+      const users = db.users[jid];
       if (!users) return m.reply(Func.texted("bold", `Can't find user data.`));
       users.expired += users.premium
         ? 86400000 * days

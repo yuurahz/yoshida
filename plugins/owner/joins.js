@@ -20,16 +20,16 @@ module.exports = {
       );
       let jumlahHari = 86400000 * m.args[1];
       let now = new Date() * 1;
-      if (now < db.data.groups[res].expired)
-        db.data.groups[res].expired += jumlahHari;
-      else db.data.groups[res].expired = now + jumlahHari;
+      if (now < db.groups[res].expired)
+        db.groups[res].expired += jumlahHari;
+      else db.groups[res].expired = now + jumlahHari;
       if (e.length)
         await m.reply(
-          `Sukses invite bot ke group\n\n${await conn.getName(res)}\n\nBot akan keluar secara otomatis setelah *${Func.toDate(db.data.groups[res].expired - now)}*`,
+          `Sukses invite bot ke group\n\n${await conn.getName(res)}\n\nBot akan keluar secara otomatis setelah *${Func.toDate(db.groups[res].expired - now)}*`,
         );
       await conn.reply(
         res,
-        `Halo everyone 👋\n\nSaya adalah Yoshida, whatsapp bot yang siap membantu kamu mencari data, informasi, mendownload media, dll hanya melalui whatsapp\n\nBot akan keluar otomatis setelah masa aktif habis\n*TimeOut* : *${Func.toDate(db.data.groups[res].expired - now)}*`,
+        `Halo everyone 👋\n\nSaya adalah Yoshida, whatsapp bot yang siap membantu kamu mencari data, informasi, mendownload media, dll hanya melalui whatsapp\n\nBot akan keluar otomatis setelah masa aktif habis\n*TimeOut* : *${Func.toDate(db.groups[res].expired - now)}*`,
         null,
         {
           mentions: [d],

@@ -3,18 +3,18 @@ const moment = require("moment-timezone");
 module.exports = {
   command: /^(hitstat|hitdaily)$/i,
   run: async (m, { conn, Func }) => {
-    let totalhit = Object.values(db.data.stats).reduce(
+    let totalhit = Object.values(db.stats).reduce(
       (sum, { hitstat }) => sum + hitstat,
       0,
     );
-    let totaltoday = Object.values(db.data.stats).reduce(
+    let totaltoday = Object.values(db.stats).reduce(
       (sum, { today }) => sum + today,
       0,
     );
     if (m.command == "hitstat") {
       if (totalhit === 0)
         return m.reply(Func.texted("bold", "No commands hit"));
-      let stats = Object.entries(db.data.stats)
+      let stats = Object.entries(db.stats)
         .filter(([_, { hitstat }]) => hitstat > 0)
         .slice(0, 10)
         .sort(([, a], [, b]) => b.hitstat - a.hitstat)
@@ -32,7 +32,7 @@ module.exports = {
     } else if (m.command == "hitdaily") {
       if (totaltoday === 0)
         return m.reply(Func.texted("bold", "No commands hit"));
-      let stats = Object.entries(db.data.stats)
+      let stats = Object.entries(db.stats)
         .filter(([_, { today }]) => today > 0)
         .slice(0, 10)
         .sort(([, a], [, b]) => b.today - a.today)

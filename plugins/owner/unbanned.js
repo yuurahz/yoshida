@@ -28,8 +28,8 @@ module.exports = {
       who = m.text ? m.text.replace(/[^0-9]/g, "") + "@s.whatsapp.net" : m.chat;
     }
     try {
-      if (who.endsWith("g.us")) db.data.groups[who].isBanned = false;
-      else db.data.users[who].banned = false;
+      if (who.endsWith("g.us")) db.groups[who].isBanned = false;
+      else db.users[who].banned = false;
       m.reply(
         `Done Unban! Bot aktif dichat ${(await conn.getName(who)) == undefined ? "ini" : await conn.getName(who)}.`,
       );

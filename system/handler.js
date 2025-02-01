@@ -8,10 +8,10 @@ module.exports = async (conn, m, store) => {
     m.exp = 0;
     m.limit = false;
     require("@system/schema")(m);
-    const users = db.data.users[m.sender];
-    const groupSet = db.data.groups[m.chat];
-    const chats = db.data.chats[m.chat];
-    const setting = db.data.setting;
+    const users = db.users[m.sender];
+    const groupSet = db.groups[m.chat];
+    const chats = db.chats[m.chat];
+    const setting = db.setting;
     const isOwner =
       [conn.decodeJid(conn.user.id).split`@`[0], ...setting.owners]
         .map((v) => v + "@s.whatsapp.net")
@@ -63,12 +63,12 @@ module.exports = async (conn, m, store) => {
       "00 00 * * *",
       () => {
         setting.lastreset = Date.now();
-        Object.values(db.data.users).forEach((v) => {
+        Object.values(db.users).forEach((v) => {
           if (v.limit < process.env.LIMIT && !v.premium) {
             v.limit = process.env.LIMIT;
           }
         });
-        Object.entries(db.data.stats).map(([_, prop]) => (prop.today = 0));
+        Object.entries(db.stats).map(([_, prop]) => (prop.today = 0));
       },
       {
         scheduled: true,
@@ -172,7 +172,7 @@ module.exports = async (conn, m, store) => {
         users.usebot = Date.now();
         m.exp += Math.ceil(Math.random() * 10);
         m.plugin = name;
-        if (m.chat in db.data.groups || m.sender in db.data.users) {
+        if (m.chat in db.groups || m.sender in db.users) {
           if (
             !["unbanned.js"].includes(name.split("/").pop()) &&
             groupSet &&
@@ -314,9 +314,9 @@ ${teks}`.trim(),
     console.error(e);
   } finally {
     let user,
-      stats = db.data.stats;
+      stats = db.stats;
     if (m) {
-      if (m.sender && (user = db.data.users[m.sender])) {
+      if (m.sender && (user = db.users[m.sender])) {
         user.exp += m.exp;
         user.limit -= m.limit * 1;
       }

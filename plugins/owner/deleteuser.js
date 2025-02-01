@@ -31,7 +31,7 @@ module.exports = {
       let participants = m.isGroup ? groupMetadata.participants : [];
       let users = m.isGroup ? participants.find((u) => u.jid == user) : {};
       let number = user.split("@")[0];
-      delete db.data.users[user];
+      delete db.users[user];
       let pp = await conn
         .profilePictureUrl(number + "@s.whatsapp.net", "image")
         .catch((_) => "https://telegra.ph/file/24fa902ead26340f3df2c.png");

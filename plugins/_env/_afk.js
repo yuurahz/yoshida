@@ -1,8 +1,8 @@
 module.exports = {
   run: async (m, { quoted, users, Func }) => {
     users.afk = +new Date();
-    users.afkReason = quoted;
-    let lungo = `@${m.sender.split("@")[0]} *Is Now AFK*\n» ${quoted ? "*Alasan* : " + quoted : "Tanpa keterangan"}`;
+    users.afkReason = quoted.text;
+    let lungo = `@${m.sender.split("@")[0]} *Is Now AFK*\n» ${quoted.text ? "*Alasan* : " + quoted.text : "Tanpa keterangan"}`;
     m.reply(lungo, { mentions: [m.sender] });
   },
   help: ["afk"],
