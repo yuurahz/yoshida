@@ -98,6 +98,9 @@ module.exports = {
 - [x] VPS NAT [HostData](https://hostdata.id/)
 - [x] Panel [Optiklink](https://optiklink.com/)
 
+### Database
+- [x] [MongoDB](https://mongodb.com/)
+
 ---
 
 ## S&K
