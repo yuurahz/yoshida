@@ -5,7 +5,7 @@
 
 ## Introduction
 
-> - **YOSHIDA** is a whatsapp bot with many multifunctional features, using **[BAILEYS](https://github.com/Whiskeysockets/Baileys)** for free
+> **YOSHIDA** is a whatsapp bot with many multifunctional features, using **[BAILEYS](https://github.com/Whiskeysockets/Baileys)** for free
 
 ## Install and run
 ```Bash
@@ -19,7 +19,7 @@ $ npm run pm2 //for using pm2
 ```Bash
 $ pkg update && pkg upgrade -y
 $ pkg install nodejs -y
-$ pkg install imagemgick
+$ pkg install imagemagick
 $ pkg install ffmpeg
 $ pkg install git
 $ git clone https://github.com/yuurahz/yoshida
@@ -47,10 +47,10 @@ module.exports = {
       script: "./index.js", //main file to run
       node_args: "--max-old-space-size=2048", //maximum memory size
       env: {
-        NODE_ENV: "production", //opsional
+        NODE_ENV: "production", //optional
       },
       env_development: {
-        NODE_ENV: "development", //opsional
+        NODE_ENV: "development", //optional
       },
     },
   ],
