@@ -5,16 +5,34 @@
 
 ## Introduction
 
-> - **YOSHIDA** is a whatsapp bot with many multifunctional features, using **BAILEYS** for free
->
-> - This script is 100% free, which uses the API from [Yoshida-APIs](https://api.yoshida.my.id)
-> - Using the module from [@yoshx/func](https://www.npmjs.com/package/@yoshx/func)
+> - **YOSHIDA** is a whatsapp bot with many multifunctional features, using **[BAILEYS](https://github.com/Whiskeysockets/Baileys)** for free
+
+## Install and run
+```Bash
+$ npm install
+$ npm install -g pm2
+$ npm run start
+$ npm run pm2 //for using pm2
+```
+
+## For termux user
+```Bash
+$ pkg update && pkg upgrade -y
+$ pkg install nodejs -y
+$ pkg install imagemgick
+$ pkg install ffmpeg
+$ pkg install git
+$ git clone https://github.com/yuurahz/yoshida
+$ cd yoshida
+$ npm i
+$ npm start
+```
 
 ## Set in .env
 
 ```Javascript
 TZ= //The time zone you want to use
-DATABASE_URL= //your mongodb database
+DATABASE_URL= //your mongodb url
 PAIRING_STATE= //Boolean
 PAIRING_NUMBER= //number to be connected to the bot
 ```
@@ -39,15 +57,7 @@ module.exports = {
 };
 ```
 
-## Install and run
-
-```Javascript
-$ npm install
-$ npm start
-$ npm run pm2 //for using pm2
-```
-
-## Plugins run command
+## calling command
 
 ```Javascript
 module.exports = {
@@ -72,7 +82,7 @@ module.exports = {
 }
 ```
 
-## Plugins Event
+## Events
 
 ```Javascript
 module.exports = {
@@ -91,15 +101,24 @@ module.exports = {
 
 ---
 
-### Server
+### Server recommended
 
-- [x] [Heroku](https://heroku.com/) (Recommended)
+- [x] [Heroku](https://heroku.com/)
 - [x] VPS/RDP [DigitalOcean](https://digitalocean.com/)
 - [x] VPS NAT [HostData](https://hostdata.id/)
 - [x] Panel [Optiklink](https://optiklink.com/)
 
 ### Database
 - [x] [MongoDB](https://mongodb.com/)
+
+---
+
+### Heroku Buildpack
+
+| BuildPack | LINK |
+|-----------|------|
+| **FFMPEG** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
+| **IMAGEMAGICK** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
 
 ---
 
