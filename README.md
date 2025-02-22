@@ -10,22 +10,41 @@
 ## Install and run
 ```Bash
 $ npm install
-$ npm install -g pm2
 $ npm run start
-$ npm run pm2 //for using pm2
+```
+
+## Install and run using PM2
+```Bash
+$ npm install -g pm2
+$ npm run pm2 / pm2 start index.js
 ```
 
 ## For termux user
 ```Bash
 $ pkg update && pkg upgrade -y
 $ pkg install nodejs -y
-$ pkg install imagemagick
-$ pkg install ffmpeg
-$ pkg install git
+$ pkg install imagemagick -y
+$ pkg install ffmpeg -y
+$ pkg install git -y
 $ git clone https://github.com/yuurahz/yoshida
 $ cd yoshida
-$ npm i
+$ npm install
 $ npm start
+```
+
+## Run on VPS (Linux)
+```Bash
+1. sudo apt update && apt upgrade
+2. sudo apt install nodejs -y
+3. sudo apt install git -y
+4. sudo apt install ffmpeg -y (opsional)
+```
+
+## Install nvm for custom nodejs version
+```Bash
+1. curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+2. source ~/.bashrc
+3. nvm install node
 ```
 
 ## Set in .env
@@ -113,7 +132,7 @@ module.exports = {
 
 ---
 
-### Heroku Buildpack
+### Heroku Buildpack (if you are a heroku user)
 
 | BuildPack | LINK |
 |-----------|------|
