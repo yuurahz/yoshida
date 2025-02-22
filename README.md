@@ -31,7 +31,9 @@
 ## Install and run using PM2
 ```bash
 1. npm install -g pm2
-2. npm run pm2 / pm2 start index.js
+2. npm run pm2
+   or
+   pm2 start index.js
 ```
 
 ## For termux user
