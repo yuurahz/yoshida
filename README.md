@@ -51,13 +51,6 @@
 4. sudo apt install ffmpeg -y (opsional)
 ```
 
-### For Windows / RDP users
-
-- Download and install Git [here](https://git-scm.com/downloads)
-- Download and install NodeJS [here](https://nodejs.org/en/download)
-- Download and install FFMPEG [here](https://ffmpeg.org/download.html)
-- Download and install ImageMagick [here](https://imagemagick.org/script/download.php)
-
 ## Install nvm for custom nodejs version
 ```bash
 1. curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
@@ -67,7 +60,7 @@
 
 ## Set in .env
 
-```javascript
+```json
 TZ= //The time zone you want to use
 DATABASE_URL= //your mongodb url
 PAIRING_STATE= //Boolean
@@ -107,7 +100,7 @@ module.exports = {
       try {
          // your code
       } catch (e) {
-         return conn.reply(String(e))
+         return m.reply(String(e))
       }
    },
    group: Boolean,
@@ -156,6 +149,15 @@ module.exports = {
 |-----------|------|
 | **FFMPEG** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
 | **IMAGEMAGICK** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
+
+---
+
+### For Windows / RDP users
+
+- Download and install Git [here](https://git-scm.com/downloads)
+- Download and install NodeJS [here](https://nodejs.org/en/download)
+- Download and install FFMPEG [here](https://ffmpeg.org/download.html)
+- Download and install ImageMagick [here](https://imagemagick.org/script/download.php)
 
 ---
 
