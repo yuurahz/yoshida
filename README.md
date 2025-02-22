@@ -69,7 +69,7 @@ PAIRING_STATE= /** Boolean */
 PAIRING_NUMBER= /** number to be connected to the bot */
 ```
 
-## pm2 configuration
+## pm2 configuration (ecosystem.config.js)
 
 ```javascript
 module.exports = {
