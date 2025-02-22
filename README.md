@@ -7,29 +7,46 @@
 
 > **YOSHIDA** is a whatsapp bot with many multifunctional features, using **[BAILEYS](https://github.com/Whiskeysockets/Baileys)** for free
 
-## Install and run
-```Bash
-$ npm install
-$ npm run start
-```
+## Installation
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/yuurahz/yoshida.git
+    cd yoshida
+    ```
+
+2. Install the dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Start the bot:
+
+    ```bash
+    npm start
+    or
+    node index.js
+    ```
 
 ## Install and run using PM2
 ```Bash
-$ npm install -g pm2
-$ npm run pm2 / pm2 start index.js
+1. npm install -g pm2
+2. npm run pm2 / pm2 start index.js
 ```
 
 ## For termux user
 ```Bash
-$ pkg update && pkg upgrade -y
-$ pkg install nodejs -y
-$ pkg install imagemagick -y
-$ pkg install ffmpeg -y
-$ pkg install git -y
-$ git clone https://github.com/yuurahz/yoshida
-$ cd yoshida
-$ npm install
-$ npm start
+1. pkg update && pkg upgrade -y
+2. pkg install nodejs -y
+3. pkg install imagemagick -y
+4. pkg install ffmpeg -y
+5. pkg install git -y
+6. git clone https://github.com/yuurahz/yoshida
+7. cd yoshida
+8. npm install
+9. npm start
 ```
 
 ## Run on VPS (Linux)
