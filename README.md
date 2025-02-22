@@ -60,10 +60,10 @@
 
 ## Set in .env
 
-```json
-TZ= //The time zone you want to use
-DATABASE_URL= //your mongodb url
-PAIRING_STATE= //Boolean
+```bash
+TZ= /** The time zone you want to use */
+DATABASE_URL= /** your mongodb url */
+PAIRING_STATE= /** Boolean */
 PAIRING_NUMBER= /** number to be connected to the bot */
 ```
 
@@ -77,10 +77,10 @@ module.exports = {
       script: "./index.js", /** main file to run */
       node_args: "--max-old-space-size=2048", /** maximum memory size */
       env: {
-        NODE_ENV: "production", //optional
+        NODE_ENV: "production", /** optional */
       },
       env_development: {
-        NODE_ENV: "development", //optional
+        NODE_ENV: "development", /** optional */
       },
     },
   ],
@@ -112,7 +112,7 @@ module.exports = {
 }
 ```
 
-## Events
+## plugins events
 
 ```javascript
 module.exports = {
