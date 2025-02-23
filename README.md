@@ -62,7 +62,7 @@
 
 ## Set in .env
 
-```bash
+```javascript
 TZ= /** The time zone you want to use */
 DATABASE_URL= /** your mongodb url */
 PAIRING_STATE= /** Boolean */
