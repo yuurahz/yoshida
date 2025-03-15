@@ -36,6 +36,5 @@ module.exports = {
       m.reply(`${fltr}`.trim());
     }
   },
-  register: true,
   limit: 1,
 };
