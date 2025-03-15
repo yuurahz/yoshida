@@ -7,91 +7,59 @@
 
 > **YOSHIDA** is a whatsapp bot with many multifunctional features, using **[BAILEYS](https://github.com/Whiskeysockets/Baileys)** for free
 
-## Installation
-
-1. Clone the repository:
-
-    ```bash
-    git clone https://github.com/yuurahz/yoshida.git
-    cd yoshida
-    ```
-
-2. Install the dependencies:
-
-    ```bash
-    npm install
-    ```
-
-3. Start the bot:
-
-    ```bash
-    npm start
-    ```
-
-## Install and run using PM2
-```bash
-1. npm install -g pm2
-2. npm run pm2
-   or
-   pm2 start index.js
+## Install and run
+```Bash
+$ npm install
+$ npm install -g pm2
+$ npm run start
+$ npm run pm2 //for using pm2
 ```
 
 ## For termux user
-```bash
-1. pkg update && pkg upgrade -y
-2. pkg install nodejs -y
-3. pkg install imagemagick -y
-4. pkg install ffmpeg -y
-5. pkg install git -y
-```
-
-## Run on VPS (Linux)
-```bash
-1. sudo apt update && apt upgrade
-2. sudo apt install nodejs -y
-3. sudo apt install git -y
-4. sudo apt install ffmpeg -y (opsional)
-```
-
-## Install nvm for custom nodejs version
-```bash
-1. curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-2. source ~/.bashrc
-3. nvm install node
+```Bash
+$ pkg update && pkg upgrade -y
+$ pkg install nodejs -y
+$ pkg install imagemagick
+$ pkg install ffmpeg
+$ pkg install git
+$ git clone https://github.com/yuurahz/yoshida
+$ cd yoshida
+$ npm i
+$ npm start
 ```
 
 ## Set in .env
 
-```javascript
-TZ= /** The time zone you want to use */
-DATABASE_URL= /** your mongodb url */
-PAIRING_STATE= /** Boolean */
-PAIRING_NUMBER= /** number to be connected to the bot */
+```Javascript
+TZ= //The time zone you want to use
+DATABASE_URL= //your mongodb url
+PAIRING_STATE= //Boolean
+PAIRING_NUMBER= //number to be connected to the bot
 ```
 
-## pm2 configuration (ecosystem.config.js)
+## pm2 configuration
 
-```javascript
+```Javascript
 module.exports = {
   apps: [
     {
-      name: "yoshida", /** app name for pm2 */
-      script: "./index.js", /** main file to run */
-      node_args: "--max-old-space-size=2048", /** maximum memory size */
+      name: "yoshida", //app name for pm2
+      script: "./index.js", //main file to run
+      node_args: "--max-old-space-size=2048", //maximum memory size
       env: {
-        NODE_ENV: "production", /** optional */
+        NODE_ENV: "production", //optional
       },
       env_development: {
-        NODE_ENV: "development", /** optional */
+        NODE_ENV: "development", //optional
       },
     },
   ],
 };
 ```
 
-## calling command
+## Calling commands (default plugins)
 
-```javascript
+```Javascript
 module.exports = {
    help: ['command'],
    tags: ['category'],
@@ -102,7 +70,7 @@ module.exports = {
       try {
          // your code
       } catch (e) {
-         return m.reply(String(e))
+         return conn.reply(m.chat, Func.jsonFormat(e), m)
       }
    },
    group: Boolean,
@@ -114,9 +82,9 @@ module.exports = {
 }
 ```
 
-## plugins events
+## Plugins events
 
-```javascript
+```Javascript
 module.exports = {
    async before(m, {
       conn
@@ -124,7 +92,7 @@ module.exports = {
       try {
          // your code
       } catch (e) {
-         return m.reply(String(e))
+         return conn.reply(m.chat, Func.jsonFormat(e), m)
       }
       return true
    }
@@ -145,21 +113,12 @@ module.exports = {
 
 ---
 
-### Heroku Buildpack (if you are a heroku user)
+### Heroku Buildpack
 
 | BuildPack | LINK |
 |-----------|------|
 | **FFMPEG** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
 | **IMAGEMAGICK** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
-
----
-
-### For Windows / RDP users
-
-- Download and install Git [here](https://git-scm.com/downloads)
-- Download and install NodeJS [here](https://nodejs.org/en/download)
-- Download and install FFMPEG [here](https://ffmpeg.org/download.html)
-- Download and install ImageMagick [here](https://imagemagick.org/script/download.php)
 
 ---
 
