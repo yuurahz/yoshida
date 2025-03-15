@@ -45,7 +45,7 @@ module.exports = {
           `“Total command hit statistics for today ${Func.formatNumber(totaltoday)} hits.”\n\n` +
           stats +
           "\n\n" +
-          process.env.FOOTER,
+          footer,
       );
     }
   },
