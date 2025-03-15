@@ -58,7 +58,7 @@ module.exports = {
             {
               buttonId: m.prefix + "run",
               buttonText: {
-                displayText: "ping",
+                displayText: "uptime",
               },
             },
             {
@@ -69,7 +69,10 @@ module.exports = {
             },
           ],
           viewOnce: true,
-          headerType: 1,
+          headerType: 4,
+          contextInfo: {
+            mentionedJid: [m.sender],
+          },
         });
       } else if (setting.style === 2) {
         m.reply(list);
@@ -111,7 +114,10 @@ module.exports = {
             },
           ],
           viewOnce: true,
-          headerType: 1,
+          headerType: 4,
+          contextInfo: { 
+            mentionedJid: [m.sender]
+          },
         });
       } else if (setting.style === 2) {
         m.reply(messages);
@@ -159,7 +165,10 @@ module.exports = {
             },
           ],
           viewOnce: true,
-          headerType: 1,
+          headerType: 4,
+          contextInfo: {
+            mentionedJid: [m.sender]
+          },
         });
       } else if (setting.style === 2) {
         m.reply(kabeh);
