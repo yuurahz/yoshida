@@ -3,7 +3,7 @@ const fs = require("fs");
 
 /* idk */
 global.upload = require("@library/uploader");
-global.footer = Func.Styles("© yoshida-bot");
+global.footer = Func.styles("© yoshida-bot");
 
 /* message */
 global.mess = Object.freeze({

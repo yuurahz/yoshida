@@ -1,12 +1,10 @@
+const fs = require("fs");
 const cron = require("node-cron");
-const { unwatchFile, watchFile } = require("fs");
 const { Function: Func, Plugins, Color } = new (require("@yoshx/func"))();
 const { plugins } = Plugins;
 
 module.exports = async (conn, m, store) => {
   try {
-    m.exp = 0;
-    m.limit = false;
     require("@system/schema")(m);
     const users = db.users[m.sender];
     const groupSet = db.groups[m.chat];
@@ -17,8 +15,11 @@ module.exports = async (conn, m, store) => {
         .map((v) => v + "@s.whatsapp.net")
         .includes(m.sender) || m.fromMe;
     const isPrems = users.premium || isOwner;
+    if (setting.autoread) {
+      await conn.sendPresenceUpdate("available", m.chat);
+      await conn.readMessages([m.key]);
+    }
     if (m.isBot) return;
-    if (setting.autoread) await conn.readMessages([m.key]);
     if (setting.debug_mode && !m.fromMe && isOwner)
       await m.reply(Func.jsonFormat(m));
     if (
@@ -33,7 +34,6 @@ module.exports = async (conn, m, store) => {
           Func.texted(
             "bold",
             "Bot time has expired and will leave from this group, thank you.",
-            null,
             {
               mentions: m.metadata.participants.map((v) => v.id),
             },
@@ -115,6 +115,7 @@ module.exports = async (conn, m, store) => {
           console.error(e);
         }
       }
+      const quoted = m.isQuoted ? m.quoted : m;
       const str2Regex = (str) => str.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&");
       let _prefix = plugin.customPrefix ? plugin.customPrefix : m.prefix;
       let match = (
@@ -143,6 +144,7 @@ module.exports = async (conn, m, store) => {
             users,
             chats,
             setting,
+            quoted,
             plugins,
             isOwner,
             isPrems,
@@ -155,7 +157,6 @@ module.exports = async (conn, m, store) => {
       if ((usedPrefix = (match[0] || "")[0])) {
         let noPrefix = m.body.replace(usedPrefix, "");
         let [command, ...args] = noPrefix.trim().split` `.filter((v) => v);
-        let quoted = m.isQuoted ? m.quoted : m;
         command = (command || "").toLowerCase();
         let isAccept =
           plugin.command instanceof RegExp
@@ -168,9 +169,8 @@ module.exports = async (conn, m, store) => {
                 ? plugin.command === command
                 : false;
         if (!isAccept) continue;
-        users.hit += 1;
         users.usebot = Date.now();
-        m.exp += Math.ceil(Math.random() * 10);
+        users.exp += Math.ceil(Math.random() * 10);
         m.plugin = name;
         if (m.chat in db.groups || m.sender in db.users) {
           if (
@@ -191,7 +191,14 @@ module.exports = async (conn, m, store) => {
           continue;
         if (
           !m.isGroup &&
-          !["_creator.js"].includes(name.split("/").pop()) &&
+          ![
+            "profile.js",
+            "sewa.js",
+            "_creator.js",
+            "_rules.js",
+            "_respon.js",
+            "regist.js",
+          ].includes(name.split("/").pop()) &&
           chats &&
           !isPrems &&
           !users.banned &&
@@ -200,15 +207,23 @@ module.exports = async (conn, m, store) => {
           continue;
         if (
           !m.isGroup &&
-          !["_creator.js"].includes(name.split("/").pop()) &&
+          ![
+            "profile.js",
+            "sewa.js",
+            "_creator.js",
+            "_rules.js",
+            "_respon.js",
+            "regist.js",
+          ].includes(name.split("/").pop()) &&
           chats &&
+          !isPrems &&
           !users.banned &&
           setting.group_mode &&
           !Object.values(
-            (await store.groupMetadata[process.env.ID_GC]).participants,
+            (await conn.groupMetadata(process.env.ID_GC)).participants,
           ).find((users) => users.id == m.sender)
         ) {
-          m.reply(mess.gconly.replace("+link", setting.link)).then(
+          m.reply(mess["gconly"].replace("+link", setting.link)).then(
             async () => (chats.lastchat = new Date() * 1),
           );
           continue;
@@ -221,15 +236,14 @@ module.exports = async (conn, m, store) => {
           m.reply(mess.blocked);
           continue;
         }
+
         if (plugin.owner && !isOwner) {
           m.reply(mess.owner);
           continue;
-        }
-        if (plugin.premium && !isPrems) {
+        } else if (plugin.premium && !isPrems) {
           m.reply(mess.premium);
           continue;
-        }
-        if (plugin.group && !m.isGroup) {
+        } else if (plugin.group && !m.isGroup) {
           m.reply(mess.group);
           continue;
         } else if (plugin.botAdmin && !m.isBotAdmin) {
@@ -238,25 +252,40 @@ module.exports = async (conn, m, store) => {
         } else if (plugin.admin && !m.isAdmin) {
           m.reply(mess.admin);
           continue;
-        }
-        if (plugin.private && m.isGroup) {
+        } else if (plugin.private && m.isGroup) {
           m.reply(mess.private);
           continue;
-        }
-        if (plugin.register && users.registered === false) {
+        } else if (plugin.register && users.registered === false) {
           m.reply(mess.register);
           continue;
-        }
-        let xp = "exp" in plugin ? parseInt(plugin.exp) : 25;
-        if (xp > 999) m.reply("Cheat?");
-        else m.exp += xp;
-        if (!isPrems && plugin.limit && users.limit < plugin.limit * 1) {
-          m.reply(
-            `Limit penggunaan anda telah mencapai batas! silahkan tunggu pukul *00:00* untuk mereset limit anda, atau upgrade ke premium untuk mendapatkan *unlimited* limit`,
-          );
+        } else if (plugin.game && groupSet.game === false) {
+          m.reply(mess.game);
           continue;
-        }
-        if (plugin.level > users.level) {
+        } else if (plugin.rpg && groupSet.rpg === false) {
+          m.reply(mess.rpg);
+          continue;
+        } else if (plugin.nsfw && groupSet.nsfw === false) {
+          m.reply(mess.nsfw);
+          continue;
+        } else if (plugin.limit && users.limit < plugin.limit * 1) {
+          m.reply(
+            `Limit penggunaan anda telah mencapai batas, silahkan tunggu pukul *00:00* untuk mereset limit anda, atau upgrade ke premium untuk mendapatkan *unlimited* limit.`,
+          ).then(() => (users.premium = false));
+          continue;
+        } else if (!isPrems && plugin.limit && users.limit > 0) {
+          const limit = plugin.limit == "Boolean" ? 1 : plugin.limit;
+          if (users.limit >= limit) {
+            users.limit -= limit;
+          } else {
+            m.reply(
+              Func.texted(
+                "bold",
+                `Your limit is not enough to use this feature.`,
+              ),
+            );
+            continue;
+          }
+        } else if (plugin.level > users.level) {
           m.reply(
             `level *${plugin.level}* is required to use this command. Your level *${users.level}*`,
           );
@@ -277,9 +306,7 @@ module.exports = async (conn, m, store) => {
         };
         try {
           await plugin.call(conn, m, extra);
-          if (!isPrems) m.limit = m.limit || plugin.limit || false;
         } catch (e) {
-          m.error = e;
           console.error(e);
           if (e) {
             let teks = Func.jsonFormat(e);
@@ -313,54 +340,40 @@ ${teks}`.trim(),
   } catch (e) {
     console.error(e);
   } finally {
-    let user,
-      stats = db.stats;
+    let stats = db.stats;
     if (m) {
-      if (m.sender && (user = db.users[m.sender])) {
-        user.exp += m.exp;
-        user.limit -= m.limit * 1;
-      }
-      let now = +new Date();
       if (m.plugin) {
+        let now = +new Date();
         let pluginName = m.plugin.split("/").pop().replace(".js", "");
-        let stat = stats[pluginName] || {
-          hitstat: 0,
-          today: 0,
-          lasthit: 0,
-          sender: m.sender,
-          lastDate: "",
-        };
+        let stat = stats[pluginName] || { hitstat: 0, today: 0, lasthit: 0 };
         stat.hitstat += 1;
         stat.today += 1;
         stat.lasthit = now;
-        stat.lastDate = new Date(now).toDateString();
         stats[pluginName] = stat;
       }
     }
-    if (m.message && !m.isBot) {
+    if (m.message && !m.fromMe) {
+      console.log("\x1b[30m--------------------\x1b[0m");
+      console.log(Color.bgRed(` Console Message Info `));
       console.log(
-        Color.cyan("From"),
-        Color.cyan(conn.getName(m.chat)),
-        Color.blueBright(m.chat),
+        `   - Date: ${new Date().toLocaleString("id-ID")} WIB \n` +
+          `   - Message: ${m.body || m.type} \n` +
+          `   - Sender Number: ${await conn.getName(m.sender)} \n` +
+          `   - Sender Name: ${m.name} \n` +
+          `   - Sender ID: ${m.id}`,
       );
-      console.log(
-        Color.yellowBright("Chat"),
-        Color.yellowBright(
-          m.isGroup
-            ? `Group (${m.sender} : ${conn.getName(m.sender)})`
-            : "Private",
-        ),
-      );
-      console.log(
-        Color.cyanBright("Message :"),
-        Color.cyanBright(m.body || m.type),
-      );
+      if (m.isGroup) {
+        console.log(
+          `   - Group: ${await conn.getName(m.chat)} \n` +
+            `   - GroupID: ${m.chat}`,
+        );
+      }
     }
   }
 };
 
-watchFile(require.resolve(__filename), () => {
-  unwatchFile(require.resolve(__filename));
+fs.watchFile(require.resolve(__filename), () => {
+  fs.unwatchFile(require.resolve(__filename));
   console.log(Color.cyanBright("Update ~ 'handler.js'"));
   delete require.cache[require.resolve(__filename)];
 });
