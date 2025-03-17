@@ -10,8 +10,7 @@
 ## Install and run
 ```Bash
 $ npm install
-$ npm run start
-$ npm run pm2 //for using pm2
+$ npm start
 ```
 
 ## For termux user
@@ -28,7 +27,6 @@ $ npm start
 ```
 
 ## Set in .env
-
 ```Javascript
 TZ= //The time zone you want to use
 DATABASE_URL= //your mongodb url (opsional)
@@ -37,7 +35,6 @@ PAIRING_NUMBER= //number to be connected to the bot
 ```
 
 ## pm2 configuration (opsional)
-
 ```Javascript
 module.exports = {
   apps: [
@@ -57,7 +54,6 @@ module.exports = {
 ```
 
 ## Plugins
-
 ```Javascript
 module.exports = {
    help: ['command'],
@@ -98,7 +94,6 @@ module.exports = {
 ```
 
 ## For case
-
 ```Javascript
 case "tes": {
   m.reply("on!");
@@ -109,19 +104,17 @@ case "tes": {
 ---
 
 ### Server recommended
-
 - [x] [Heroku](https://heroku.com/)
 - [x] VPS/RDP [DigitalOcean](https://digitalocean.com/)
 - [x] VPS NAT [HostData](https://hostdata.id/)
 - [x] Panel [Optiklink](https://optiklink.com/)
 
 ### Database
-- [x] [MongoDB](https://mongodb.com/) [recommended]
+- [x] [MongoDB](https://mongodb.com/) (recommended)
 
 ---
 
-### Heroku Buildpack
-
+### Heroku Buildpack (For heroku user)
 | BuildPack | LINK |
 |-----------|------|
 | **FFMPEG** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
