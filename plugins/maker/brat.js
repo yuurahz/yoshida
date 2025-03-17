@@ -15,7 +15,7 @@ module.exports = {
         let make = quoted.text.split("-animate")[0].trim();
         await makeSticker(
           await Func.fetchBuffer(
-            `https://brat.caliphdev.com/api/brat/animate?text=${encodeURIComponent(make)}`,
+            `https://fastrestapis.fasturl.cloud/maker/brat/animated?text=${encodeURIComponent(make)}&mode=animate`,
           ),
           {
             pack: setting.stick_pack,
