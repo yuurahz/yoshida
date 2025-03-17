@@ -80,7 +80,7 @@ exports.setExif = async (webpSticker, packname, author, extra = {}) => {
   return new Promise(async (resolve, reject) => {
     try {
       const img = new Image();
-      const stickerPackId = Func.randomBytes(7).toString("hex");
+      const stickerPackId = Func.randomBytes(5).toString("hex");
       const json = {
         "sticker-pack-id": `${"yoshida-" + stickerPackId}`,
         "sticker-pack-name": packname,
