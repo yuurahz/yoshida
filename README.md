@@ -31,12 +31,12 @@ $ npm start
 
 ```Javascript
 TZ= //The time zone you want to use
-DATABASE_URL= //your mongodb url
+DATABASE_URL= //your mongodb url (opsional)
 PAIRING_STATE= //Boolean
 PAIRING_NUMBER= //number to be connected to the bot
 ```
 
-## pm2 configuration
+## pm2 configuration (opsional)
 
 ```Javascript
 module.exports = {
