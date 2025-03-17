@@ -31,7 +31,6 @@
       setting: {},
       stats: {},
       msgs: {},
-      sticker: {},
     };
     await mydb.write(db);
     console.log(Color.green("[ DATABASE ] Database initialized!"));
