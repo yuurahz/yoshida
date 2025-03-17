@@ -56,7 +56,7 @@ module.exports = {
 };
 ```
 
-## Calling commands (default plugins)
+## Plugins
 
 ```Javascript
 module.exports = {
@@ -82,7 +82,6 @@ module.exports = {
 ```
 
 ## Plugins events
-
 ```Javascript
 module.exports = {
    async before(m, {
@@ -95,6 +94,15 @@ module.exports = {
       }
       return true
    }
+}
+```
+
+## For case
+
+```Javascript
+case "tes": {
+  m.reply("on!");
+  break;
 }
 ```
 
