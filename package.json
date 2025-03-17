@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/yuurahz/yoshida#readme",
   "dependencies": {
-    "@yoshx/func": "^0.0.0",
+    "@yoshx/func": "latest",
     "awesome-phonenumber": "^2.64.0",
     "baileys": "npm:baileys-mod",
     "child_process": "^1.0.2",
