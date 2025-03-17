@@ -56,16 +56,16 @@ module.exports = {
 ## Plugins
 ```Javascript
 module.exports = {
-   help: ['command'],
+   help: ['display'],
    tags: ['category'],
    command: /^(command)$/i,
    run: async (m, {
-      conn
+      Func
    }) => {
       try {
          // your code
       } catch (e) {
-         return conn.reply(m.chat, Func.jsonFormat(e), m)
+         return m.reply(Func.jsonFormat(e))
       }
    },
    group: Boolean,
@@ -81,12 +81,12 @@ module.exports = {
 ```Javascript
 module.exports = {
    async before(m, {
-      conn
+      Func
    }) {
       try {
          // your code
       } catch (e) {
-         return conn.reply(m.chat, Func.jsonFormat(e), m)
+         return m.reply(Func.jsonFormat(e))
       }
       return true
    }
