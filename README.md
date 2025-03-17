@@ -108,7 +108,7 @@ module.exports = {
 - [x] Panel [Optiklink](https://optiklink.com/)
 
 ### Database
-- [x] [MongoDB](https://mongodb.com/)
+- [x] [MongoDB](https://mongodb.com/) [recommended]
 
 ---
 
