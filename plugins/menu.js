@@ -51,30 +51,6 @@ module.exports = {
         .join("\n│ ◦ " + m.prefix + m.command + "  ");
       let list = `${message}${Func.readMore()}\n\n*— List Menu*\n│ ◦ ${m.prefix + m.command} all\n│ ◦ ${m.prefix + m.command} ${daftarTag}\n└──`;
       if (setting.style === 1) {
-        m.reply({
-          text: list,
-          footer,
-          buttons: [
-            {
-              buttonId: m.prefix + "run",
-              buttonText: {
-                displayText: "uptime",
-              },
-            },
-            {
-              buttonId: `${m.prefix + m.command} all`,
-              buttonText: {
-                displayText: "all menu",
-              },
-            },
-          ],
-          viewOnce: true,
-          headerType: 4,
-          contextInfo: {
-            mentionedJid: [m.sender],
-          },
-        });
-      } else if (setting.style === 2) {
         m.reply(list);
       } else {
         m.reply({
@@ -102,24 +78,6 @@ module.exports = {
         .join("\n│ ◦" + " ");
       const messages = `*— MENU ${perintah.toUpperCase()}*\n│ ◦ ${daftarHelp}\n└──`;
       if (setting.style === 1) {
-        m.reply({
-          text: messages,
-          footer,
-          buttons: [
-            {
-              buttonId: `${m.prefix + m.command} all`,
-              buttonText: {
-                displayText: "all menu",
-              },
-            },
-          ],
-          viewOnce: true,
-          headerType: 4,
-          contextInfo: { 
-            mentionedJid: [m.sender]
-          },
-        });
-      } else if (setting.style === 2) {
         m.reply(messages);
       } else {
         m.reply({
@@ -153,24 +111,6 @@ module.exports = {
         .join("\n");
       let kabeh = `Welcome @${m.sender.replace(/@.+/g, "")} 🙌🏻\nNeed Help?, Here is a list of available commands\n\nTotal Command:\n\`${fitur}\` More or less\n${Func.readMore()}\n${allTagsAndHelp}`;
       if (setting.style === 1) {
-        m.reply({
-          text: kabeh,
-          footer,
-          buttons: [
-            {
-              buttonId: `${m.prefix + m.command}`,
-              buttonText: {
-                displayText: "back to menu",
-              },
-            },
-          ],
-          viewOnce: true,
-          headerType: 4,
-          contextInfo: {
-            mentionedJid: [m.sender]
-          },
-        });
-      } else if (setting.style === 2) {
         m.reply(kabeh);
       } else {
         m.reply({
