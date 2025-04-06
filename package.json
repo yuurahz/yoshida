@@ -1,10 +1,10 @@
 {
   "name": "yoshida",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "simple wa bot",
   "main": "index.js",
   "scripts": {
-    "start": "node --max-old-space-size=2048 index.js",
+    "start": "node index.js",
     "pm2": "pm2 start"
   },
   "repository": {
@@ -13,7 +13,10 @@
   },
   "keywords": [
     "yoshida",
-    "base-bot"
+    "base-bot",
+    "auto-ai",
+    "bot-wa",
+    "bot-wa-termux"
   ],
   "author": "yuurahz",
   "license": "MIT",
