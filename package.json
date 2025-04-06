@@ -22,9 +22,10 @@
   },
   "homepage": "https://github.com/yuurahz/yoshida#readme",
   "dependencies": {
+    "@google/generative-ai": "^0.24.0",
     "@yoshx/func": "latest",
     "awesome-phonenumber": "^2.64.0",
-    "baileys": "npm:baileys-mod",
+    "baileys": "latest",
     "child_process": "^1.0.2",
     "form-data": "^4.0.1",
     "link-preview-js": "^3.0.12",
@@ -34,7 +35,8 @@
     "node-cron": "^3.0.3",
     "node-webpmux": "^3.2.0",
     "pino": "^9.6.0",
-    "syntax-error": "1.4.0"
+    "syntax-error": "1.4.0",
+    "yt-search": "^2.6.1"
   },
   "_moduleAliases": {
     "@library": "library",
