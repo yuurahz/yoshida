@@ -6,6 +6,7 @@
 ## Introduction
 
 > **YOSHIDA** is a whatsapp bot with many multifunctional features, using **[BAILEYS](https://github.com/Whiskeysockets/Baileys)** for free
+> The addition of interactive AI features that allow for a more engaging and realistic conversation experience ✨.
 
 ## Install and run
 ```Bash
