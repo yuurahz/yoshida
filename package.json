@@ -1,6 +1,6 @@
 {
   "name": "yoshida",
-  "version": "0.0.5",
+  "version": "0.0.2",
   "description": "simple wa bot",
   "main": "index.js",
   "scripts": {
@@ -13,10 +13,7 @@
   },
   "keywords": [
     "yoshida",
-    "base-bot",
-    "auto-ai",
-    "bot-wa",
-    "bot-wa-termux"
+    "base-bot"
   ],
   "author": "yuurahz",
   "license": "MIT",
