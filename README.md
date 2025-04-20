@@ -133,6 +133,9 @@ case "tes": {
 
 ---
 
+## Note
+If you experience any problems or errors, please contact us here (https://chat.whatsapp.com/HnoKcpzYsKE5y0thEM060h)
+
 ## Tqto
  [![nando](https://github.com/rifnd.png?size=50)](https://github.com/rifnd) | [![Adi](https://github.com/yuurahz.png?size=50)](https://github.com/yuurahz) | [![Baileys](https://github.com/Whiskeysockets.png?size=50)](https://github.com/Whiskeysockets)
 ----|----|----
