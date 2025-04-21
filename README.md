@@ -15,20 +15,7 @@ $ npm install
 $ npm start
 ```
 
-## For termux user
-```Bash
-$ pkg update && pkg upgrade -y
-$ pkg install nodejs -y
-$ pkg install imagemagick -y
-$ pkg install ffmpeg -y
-$ pkg install git -y
-$ git clone https://github.com/yuurahz/yoshida
-$ cd yoshida
-$ npm i
-$ npm start
-```
-
-## Set in .env
+## Set in environment variabel
 ```Javascript
 TZ= //The time zone you want to use
 DATABASE_URL= //your mongodb url (opsional)
@@ -36,7 +23,7 @@ PAIRING_STATE= //Boolean
 PAIRING_NUMBER= //number to be connected to the bot
 ```
 
-## pm2 configuration (opsional)
+## pm2 configuration (optional)
 ```Javascript
 module.exports = {
   apps: [
@@ -55,7 +42,7 @@ module.exports = {
 };
 ```
 
-## Plugins
+## Plugins execution
 ```Javascript
 module.exports = {
    help: ['display'],
@@ -95,7 +82,7 @@ module.exports = {
 }
 ```
 
-## For case
+## Case execution
 ```Javascript
 case "tes": {
   m.reply("on!");
