@@ -1,7 +1,7 @@
 <p align="center"> <img src="https://komarev.com/ghpvc/?username=yuurahz&label=Repo%20views&color=0e75b6&style=flat" alt="yuurahz" /> </p>
 
 ## YOSHIDA-BOT
-![Layout](https://files.catbox.moe/vhjl81.jpg)
+![Layout](https://files.catbox.moe/g155d2.jpg)
 
 ## Introduction
 
