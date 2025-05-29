@@ -4,22 +4,28 @@
   require("@system/setting");
   const fs = require("fs");
   const pino = require("pino");
-  const baileys = require("baileys");
   const cron = require("node-cron");
   const { Boom } = require("@hapi/boom");
   const NodeCache = require("node-cache");
+  const baileys = require("@whiskeysockets/baileys");
   const { Client, serialize } = require("@system/socket");
   const { Local, MongoDB } = require("@system/provider");
-  const { Color, Libs, Plugins, Function: Func } = new (require("@yoshx/func"))();
+  const { usePostgreSQLAuthState } = require("postgres-baileys");
+  const {
+    Color,
+    Libs,
+    Plugins,
+    Function: Func,
+  } = new (require("@yoshx/func"))();
   const { loadPlugins, watchPlugins } = Plugins;
   const { loadLibs, watchLibs } = Libs;
-  
+
   /** database options */
   const mydb = /json/i.test(process.env.DATABASE_STATE)
     ? new Local()
     : /mongo/i.test(process.env.DATABASE_STATE)
       ? new MongoDB(process.env.DATABASE_URL, "db_bot")
-      : process.exit(1);
+      : process.exit();
 
   /** database init */
   global.db = await mydb.read();
@@ -31,6 +37,8 @@
       setting: {},
       stats: {},
       msgs: {},
+      sticker: {},
+      others: {},
     };
     await mydb.write(db);
     console.log(Color.green("[ DATABASE ] Database initialized!"));
@@ -43,19 +51,103 @@
   }).child({ class: "conn" });
   logger.level = "silent";
 
+  /** Session State Configuration Function */
+  const getSessionState = async () => {
+    const sessionType = process.env.SESSION_TYPE;
+
+    if (
+      sessionType.toLowerCase() === "postgresql" ||
+      sessionType.toLowerCase() === "postgres"
+    ) {
+      console.log(Color.cyan("[ SESSION ] Using PostgreSQL session storage"));
+
+      const postgreSQLConfig = {
+        user: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        host: process.env.POSTGRES_HOST,
+        port: parseInt(process.env.POSTGRES_PORT),
+        database: process.env.POSTGRES_DATABASE,
+        ssl: {
+          rejectUnauthorized: true,
+          ca: ``, // login/create account here: "https://console.aiven.io" to get ssl certificate
+        },
+      };
+
+      try {
+        const { state, saveCreds, deleteSession } =
+          await usePostgreSQLAuthState(
+            postgreSQLConfig,
+            process.env.SESSION_NAME,
+          );
+
+        return {
+          type: "postgresql",
+          state,
+          saveCreds,
+          deleteSession,
+        };
+      } catch (error) {
+        console.log(
+          Color.red(
+            "[ SESSION ] PostgreSQL connection failed, falling back to local storage",
+          ),
+        );
+        console.error(error);
+        return getLocalSessionState();
+      }
+    } else {
+      return getLocalSessionState();
+    }
+  };
+
+  /** Local Session State Function */
+  const getLocalSessionState = async () => {
+    console.log(Color.cyan("[ SESSION ] Using local file session storage"));
+
+    const { state, saveCreds } = await baileys.useMultiFileAuthState(
+      `./${process.env.SESSION_NAME}`,
+    );
+
+    const deleteSession = async () => {
+      try {
+        const sessionPath = `./${process.env.SESSION_NAME}`;
+        if (fs.existsSync(sessionPath)) {
+          await fs.rmSync(sessionPath, { recursive: true, force: true });
+          console.log(
+            Color.green("[ SESSION ] Local session deleted successfully"),
+          );
+        }
+      } catch (error) {
+        console.error(
+          Color.red("[ SESSION ] Error deleting local session:"),
+          error,
+        );
+      }
+    };
+
+    return {
+      type: "local",
+      state,
+      saveCreds,
+      deleteSession,
+    };
+  };
+
   /** connect to websocket */
   const connectWA = async () => {
     const store = await baileys.makeInMemoryStore({
       logger,
     });
 
-    const { state, saveCreds } = await baileys.useMultiFileAuthState(
-      `./${process.env.SESSION_NAME}`,
-    );
+    const sessionConfig = await getSessionState();
+    const { state, saveCreds, deleteSession } = sessionConfig;
 
     const { version, isLatest } = await baileys.fetchLatestBaileysVersion();
     console.log(
       Color.cyan(`-- Using WA v${version.join(".")}, isLatest: ${isLatest} --`),
+    );
+    console.log(
+      Color.cyan(`-- Session Type: ${sessionConfig.type.toUpperCase()} --`),
     );
 
     const groupCache = new NodeCache({ stdTTL: 5 * 60, useClones: false });
@@ -68,7 +160,7 @@
         keys: baileys.makeCacheableSignalKeyStore(state.keys, logger),
       },
       printQRInTerminal: !process.env.PAIRING_STATE,
-      browser: baileys.Browsers.macOS("Firefox"),
+      browser: baileys.Browsers.ubuntu("Edge"),
       markOnlineOnConnect: false,
       generateHighQualityLinkPreview: true,
       syncFullHistory: false,
@@ -83,7 +175,7 @@
         patch: true,
         snapshot: true,
       },
-      cachedGroupMetadata: async (jid) => groupCache.get(jid),
+      cachedGroupMetadata: async (jid) => await groupCache.get(jid),
       getMessage: async (key) => {
         const jid = await baileys.jidNormalizedUser(key.remoteJid);
         const msg = await store.loadMessage(jid, key.id);
@@ -105,13 +197,13 @@
       try {
         const phoneNumber = process.env.PAIRING_NUMBER.replace(/[^0-9]/g, "");
         await baileys.delay(3000);
-        const code = await conn.requestPairingCode(phoneNumber);
+        const code = await conn.requestPairingCode(phoneNumber, "YOSHIDA1");
         console.log(
-          `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`,
+          `Pairing code: \x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`,
         );
       } catch (e) {
         console.error("[+] Gagal mendapatkan kode pairing", e);
-        process.exit(1);
+        process.exit();
       }
     }
 
@@ -148,10 +240,7 @@
               console.log(
                 Color.cyan("[+] Session Logged Out.. Recreate session..."),
               );
-              fs.rmSync(`./${process.env.SESSION_NAME}`, {
-                recursive: true,
-                force: true,
-              });
+              await deleteSession();
               console.log(Color.green("[+] Session removed!!"));
               process.send("reset");
             } catch {
@@ -160,21 +249,15 @@
             break;
           case 403:
             console.log(Color.red(`[+] Your WhatsApp Has Been Baned :D`));
-            fs.rmSync(`./${process.env.SESSION_NAME}`, {
-              recursive: true,
-              force: true,
-            });
-            process.exit(1);
+            await deleteSession();
+            process.exit();
             break;
           case 405:
             try {
               console.log(
                 Color.cyan("[+] Session Not Logged In.. Recreate session..."),
               );
-              fs.rmSync(`./${process.env.SESSION_NAME}`, {
-                recursive: true,
-                force: true,
-              });
+              await deleteSession();
               console.log(Color.green("[+] Session removed!!"));
               process.send("reset");
             } catch {
@@ -227,56 +310,53 @@
       }
     });
 
-    /** participants update */
-    conn.ev.on("group-participants.update", ({ id, participants, action }) => {
-      const group = db.groups[id];
-      const metadata = store.groupMetadata[id];
-      groupCache.set(id, metadata);
-      if (metadata) {
-        switch (action) {
-          case "add":
-          case "revoked_membership_requests":
-            metadata.participants.push(
-              ...participants.map((id) => ({
-                id: baileys.jidNormalizedUser(id),
-                admin: null,
-              })),
-            );
-            break;
-          case "demote":
-          case "promote":
-            for (const participant of metadata.participants) {
-              let id = baileys.jidNormalizedUser(participant.id);
-              if (participants.includes(id)) {
-                participant.admin = action === "promote" ? "admin" : null;
-              }
-            }
-            break;
-          case "remove":
-            metadata.participants = metadata.participants.filter(
-              (p) => !participants.includes(baileys.jidNormalizedUser(p.id)),
-            );
-            break;
-        }
-      }
-    });
-
-    /** participants update with greetings */
+    /** participants update with metadata and greetings */
     conn.ev.on(
       "group-participants.update",
       async ({ id, participants, action }) => {
-        if (db.setting.self_mode) return;
-        let group = db.groups[id] || {};
-        switch (action) {
-          case "add":
-          case "remove":
-          case "leave":
-          case "invite":
-          case "invite_v4":
-            if (group.welcome) {
+        const group = db.groups[id] || {};
+        const metadata = store.groupMetadata[id];
+        groupCache.set(id, metadata);
+
+        if (metadata) {
+          switch (action) {
+            case "add":
+            case "revoked_membership_requests":
+              metadata.participants.push(
+                ...participants.map((id) => ({
+                  id: baileys.jidNormalizedUser(id),
+                  admin: null,
+                })),
+              );
+              break;
+            case "demote":
+            case "promote":
+              for (const participant of metadata.participants) {
+                let id = baileys.jidNormalizedUser(participant.id);
+                if (participants.includes(id)) {
+                  participant.admin = action === "promote" ? "admin" : null;
+                }
+              }
+              break;
+            case "remove":
+              metadata.participants = metadata.participants.filter(
+                (p) => !participants.includes(baileys.jidNormalizedUser(p.id)),
+              );
+              break;
+          }
+        }
+
+        if (!db.setting.self_mode && group.welcome) {
+          switch (action) {
+            case "add":
+            case "remove":
+            case "leave":
+            case "invite":
+            case "invite_v4":
               let groupMetadata =
                 (await store.groupMetadata[id]) ||
                 (store.contacts[id] || {}).metadata;
+
               for (let user of participants) {
                 let teks = (
                   action === "add"
@@ -288,9 +368,13 @@
                         .replace("@desc", groupMetadata.desc.toString())
                     : group.sBye || "Sayonara @user (ー_ー゛)"
                 ).replace("@user", "@" + user.split("@")[0]);
-                conn.reply(id, teks, null);
+
+                conn.reply(id, teks, null, {
+                  ephemeralExpiration: groupMetadata.ephemeralDuration,
+                });
               }
-            }
+              break;
+          }
         }
       },
     );
@@ -334,8 +418,8 @@
         }
       }
 
-      require("@system/handler")(conn, m, store);
       require("@system/case")(conn, m);
+      require("@system/handler")(conn, m, store, mydb);
     });
 
     /** reject call */
@@ -362,35 +446,9 @@
       5 * 60 * 1000,
     );
 
-    /** clear session every 00:00 AM */
-    cron.schedule(
-      "0 0 * * *",
-      () => {
-        const sessionFiles = fs.readdirSync(`./${process.env.SESSION_NAME}`);
-        if (sessionFiles.length > 0) {
-          sessionFiles
-            .filter((v) => v !== "creds.json")
-            .forEach((v) =>
-              fs
-                .unlinkSync(`./${process.env.SESSION_NAME}/` + v)
-                .then(() =>
-                  console.log(
-                    Color.cyanBright("[+] Clear all session trash. . ."),
-                  ),
-                ),
-            );
-        }
-      },
-      {
-        scheduled: true,
-        timezone: process.env.TZ,
-      },
-    );
-
     /** save db every 30 seconds */
     setInterval(async () => {
-      await mydb
-        .write(db)
+      await mydb.write(db);
     }, 60_000);
 
     /** load plugins directory */
