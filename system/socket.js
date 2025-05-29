@@ -2,17 +2,21 @@ const {
   generateWAMessageFromContent,
   generateForwardMessageContent,
   downloadContentFromMessage,
+  downloadMediaMessage,
   extractMessageContent,
+  generateWAMessage,
   jidNormalizedUser,
   areJidsSameUser,
+  STORIES_JID,
   jidDecode,
   proto,
-} = require("baileys");
+} = require("@whiskeysockets/baileys");
 const PhoneNumber = require("awesome-phonenumber");
 const { Function: Func } = new (require("@yoshx/func"))();
 const { toAudio, toPTT } = require("@library/converter");
 const { fromBuffer } = require("file-type");
 const path = require("path");
+const pino = require("pino");
 const fs = require("fs");
 
 /**
@@ -23,6 +27,11 @@ const fs = require("fs");
  */
 function Client({ conn, store }) {
   const sock = Object.defineProperties(conn, {
+    /**
+     * Decodes a JID (Jabber ID).
+     * @param {string} jid - The JID to decode.
+     * @returns {string} The decoded JID.
+     */
     decodeJid: {
       value(jid) {
         if (!jid) return jid;
@@ -39,6 +48,12 @@ function Client({ conn, store }) {
       enumerable: true,
     },
 
+    /**
+     * Retrieves the name of a contact or group.
+     * @param {string} jid - The JID of the contact or group.
+     * @param {boolean} [withoutContact=false] - Whether to exclude the contact name.
+     * @returns {Promise<string>} A promise that resolves to the name of the contact or group.
+     */
     getName: {
       value(jid = "", withoutContact = false) {
         jid = conn.decodeJid(jid);
@@ -81,6 +96,14 @@ function Client({ conn, store }) {
       enumerable: true,
     },
 
+    /**
+     * Sends a contact card to a WhatsApp contact or group.
+     * @param {string} jid - The JID of the recipient.
+     * @param {Array<string|number>} contact - An array of contacts to send.
+     * @param {Object} [quoted=false] - The quoted message object.
+     * @param {Object} [opts={}] - Additional options for the message.
+     * @returns {Promise<Object>} A promise that resolves to the message object.
+     */
     sendContact: {
       async value(jid, number, quoted, options = {}) {
         let list = [];
@@ -92,11 +115,11 @@ function Client({ conn, store }) {
             vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${conn.getName(v + "@s.whatsapp.net")}\nFN:${conn.getName(v + "@s.whatsapp.net")}\nitem1.TEL;waid=${v}:${v}\nEND:VCARD`,
           });
         }
-        return conn.sendMessage(
+        return await conn.sendMessage(
           jid,
           {
             contacts: {
-              displayName: "support",
+              displayName: "customer support",
               contacts: list,
             },
           },
@@ -106,6 +129,11 @@ function Client({ conn, store }) {
       enumerable: true,
     },
 
+    /**
+     * Converts a path to a buffer.
+     * @param {string|Buffer} PATH - The path to the file or a buffer.
+     * @returns {Promise<Object>} A promise that resolves to an object containing the buffer, MIME type, and extension.
+     */
     getFile: {
       async value(PATH, returnAsFilename) {
         let res, filename;
@@ -145,6 +173,15 @@ function Client({ conn, store }) {
       enumerable: true,
     },
 
+    /**
+     * Sends a file to a WhatsApp contact or group.
+     * @param {string} from - The JID of the recipient.
+     * @param {string|Buffer} file - The path to the file or a buffer.
+     * @param {Object} quoted - The quoted message object.
+     * @param {Object} opt1 - Additional options for the message content.
+     * @param {Object} opt2 - Additional options for the message.
+     * @returns {Promise<Object>} A promise that resolves to the message object.
+     */
     sendFile: {
       async value(
         jid,
@@ -155,7 +192,6 @@ function Client({ conn, store }) {
         ptt = false,
         options = {},
       ) {
-        await conn.sendPresenceUpdate("composing", jid);
         let type = await conn.getFile(path, true);
         let { res, data: file, filename: pathFile } = type;
         if ((res && res.status !== 200) || file.length <= 65536) {
@@ -234,65 +270,67 @@ function Client({ conn, store }) {
       enumerable: true,
     },
 
+    /**
+     * Downloads media from a message.
+     * @param {Object} message - The message object containing the media.
+     * @param {string} [pathFile] - The path to save the downloaded media.
+     * @returns {Promise<Buffer|string>} A promise that resolves to the buffer or file path.
+     */
     downloadMediaMessage: {
-      value(message, pathFile) {
-        return new Promise(async (resolve, reject) => {
-          const type = Object.keys(message)[0];
-          const mimeMap = {
-            imageMessage: "image",
-            videoMessage: "video",
-            stickerMessage: "sticker",
-            documentMessage: "document",
-            audioMessage: "audio",
-          };
-          if (!mimeMap[type]) {
-            reject("Invalid message type");
-            return;
-          }
-          const messageType = mimeMap[type];
-          const stream = await downloadContentFromMessage(
-            message[type],
-            messageType,
+      async value(message, filename) {
+        let media = await downloadMediaMessage(
+          message,
+          "buffer",
+          {},
+          {
+            logger: pino({
+              timestamp: () => `,"time":"${new Date().toJSON()}"`,
+              level: "silent",
+            }).child({ class: "conn" }),
+            reuploadRequest: conn.updateMediaMessage,
+          },
+        );
+        if (filename) {
+          let mime = await fromBuffer(media);
+          let filePath = path.join(
+            process.cwd() + "/tmp",
+            `${filename}.${mime.ext}`,
           );
-          const buffer = [];
-          for await (const chunk of stream) {
-            buffer.push(chunk);
-          }
-          if (pathFile) {
-            try {
-              await fs.promises.writeFile(pathFile, Buffer.concat(buffer));
-              resolve(pathFile);
-            } catch (error) {
-              reject(error);
-            }
-          } else {
-            resolve(Buffer.concat(buffer));
-          }
-        });
+          fs.promises.writeFile(filePath, media);
+          return filePath;
+        }
+
+        return media;
       },
-      enumerable: false,
+      enumerable: true,
     },
 
+    /**
+     * reply message
+     * @param {<jid>}
+     * @param {<text>} {<string>}
+     * @param {<quoted><options>}
+     */
     reply: {
-      async value(jid, text = "", quoted, options) {
-        return Buffer.isBuffer(text)
-          ? conn.sendFile(jid, text, "file", "", quoted, false, options)
-          : conn.sendMessage(
-              jid,
-              {
-                ...options,
-                text,
-                mentions: Func.parseMention(text),
-              },
-              {
-                quoted,
-                ...options,
-                mentions: Func.parseMention(text),
-              },
-            );
+      value(jid, text = "", quoted, options) {
+        return conn.sendMessage(
+          jid,
+          {
+            ...options,
+            text,
+            mentions: Func.parseMention(text),
+          },
+          {
+            quoted,
+            ...options,
+            mentions: Func.parseMention(text),
+          },
+        );
       },
+      enumerable: true,
     },
 
+    /** copy & forward message */
     copyNForward: {
       async value(jid, message, forwardingScore = true, options = {}) {
         let m = generateForwardMessageContent(message, !!forwardingScore);
@@ -313,67 +351,404 @@ function Client({ conn, store }) {
         });
         return m;
       },
+      enumerable: true,
     },
 
-    fakeReply: {
-      value(
-        jid,
-        text = "",
-        fakeJid = conn.user.jid,
-        fakeText = "",
-        fakeGroupJid,
-        options,
-      ) {
-        return conn.sendMessage(
+    /**
+     * send album message
+     * credit:
+     * Muhammad Restu
+     *
+     * @param {string} jid
+     * @param {Object<string, any>} [options]
+     * @returns {Promise<import("baileys").WAMessage>}
+     */
+    sendAlbumMessage: {
+      async value(jid, medias, options) {
+        options = {
+          ...options,
+        };
+        if (typeof jid !== "string")
+          throw new TypeError(
+            `jid must be string, received: ${jid} (${jid?.constructor?.name})`,
+          );
+        for (const media of medias) {
+          if (!media.type || (media.type !== "image" && media.type !== "video"))
+            throw new TypeError(
+              `medias[i].type must be "image" or "video", received: ${media.type} (${media.type?.constructor?.name})`,
+            );
+          if (!media.data || (!media.data.url && !Buffer.isBuffer(media.data)))
+            throw new TypeError(
+              `medias[i].data must be object with url or buffer, received: ${media.data} (${media.data?.constructor?.name})`,
+            );
+        }
+        if (medias.length < 2) throw new RangeError("Minimum 2 media");
+
+        const caption = options.text || options.caption || "";
+        delete options.text;
+        delete options.caption;
+
+        const album = generateWAMessageFromContent(
           jid,
-          { text: text },
           {
-            quoted: {
-              key: {
-                fromMe: fakeJid == conn.user.jid,
-                participant: fakeJid,
-                ...(fakeGroupJid ? { remoteJid: fakeGroupJid } : {}),
-              },
-              message: { conversation: fakeText },
-              ...options,
+            messageContextInfo: {
+              messageSecret: new Uint8Array(Func.randomBytes(32)),
+            },
+            albumMessage: {
+              expectedImageCount: medias.filter(
+                (media) => media.type === "image",
+              ).length,
+              expectedVideoCount: medias.filter(
+                (media) => media.type === "video",
+              ).length,
+              ...(options.quoted
+                ? {
+                    contextInfo: {
+                      remoteJid: options.quoted.key.remoteJid,
+                      fromMe: options.quoted.key.fromMe,
+                      stanzaId: options.quoted.key.id,
+                      participant:
+                        options.quoted.key.participant ||
+                        options.quoted.key.remoteJid,
+                      quotedMessage: options.quoted.message,
+                    },
+                  }
+                : {}),
             },
           },
+          {},
         );
+        await conn.relayMessage(album.key.remoteJid, album.message, {
+          messageId: album.key.id,
+        });
+
+        for (const i in medias) {
+          const { type, data } = medias[i];
+          const img = await generateWAMessage(
+            album.key.remoteJid,
+            {
+              [type]: data,
+              ...(i === "0"
+                ? {
+                    caption,
+                  }
+                : {}),
+            },
+            {
+              upload: conn.waUploadToServer,
+            },
+          );
+          img.message.messageContextInfo = {
+            messageSecret: new Uint8Array(Func.randomBytes(32)),
+            messageAssociation: {
+              associationType: 1,
+              parentMessageKey: album.key,
+            },
+          };
+          await conn.relayMessage(img.key.remoteJid, img.message, {
+            messageId: img.key.id,
+          });
+        }
+
+        return album;
       },
+      enumerable: true,
     },
 
-    cMod: {
-      value(jid, copy, text = "", sender = conn.user.id, options = {}) {
-        let mtype = getContentType(copy.message);
-        let content = copy.message[mtype];
-        if (typeof content === "string") copy.message[mtype] = text || content;
-        else if (content.caption) content.caption = text || content.caption;
-        else if (content.text) content.text = text || content.text;
-        if (typeof content !== "string") {
-          copy.message[mtype] = { ...content, ...options };
-          copy.message[mtype].contextInfo = {
-            ...(content.contextInfo || {}),
-            mentionedJid:
-              options.mentions || content.contextInfo?.mentionedJid || [],
-          };
+    /**
+     * send interactive message
+     * @param <{jid}>
+     * @param {<array value>}
+     * @param {<quoted>}
+     */
+    sendButtonMessage: {
+      async value(jid, array, quoted, json = {}, options = {}) {
+        const result = [];
+
+        for (const data of array) {
+          if (data.type === "reply") {
+            for (const pair of data.value) {
+              result.push({
+                name: "quick_reply",
+                buttonParamsJson: JSON.stringify({
+                  display_text: pair[0],
+                  id: pair[1],
+                }),
+              });
+            }
+          } else if (data.type === "bubble") {
+            for (const pair of data.value) {
+              result.push({
+                buttonId: pair[1],
+                buttonText: {
+                  displayText: pair[0],
+                },
+                type: 1,
+              });
+            }
+          } else if (data.type === "url") {
+            for (const pair of data.value) {
+              result.push({
+                name: "cta_url",
+                buttonParamsJson: JSON.stringify({
+                  display_text: pair[0],
+                  url: pair[1],
+                  merBott_url: pair[1],
+                }),
+              });
+            }
+          } else if (data.type === "copy") {
+            for (const pair of data.value) {
+              result.push({
+                name: "cta_copy",
+                buttonParamsJson: JSON.stringify({
+                  display_text: pair[0],
+                  copy_code: pair[1],
+                }),
+              });
+            }
+          } else if (data.type === "list") {
+            let transformedData = data.value.map((item) => ({
+              ...(item.headers
+                ? {
+                    title: item.headers,
+                  }
+                : {}),
+              rows: item.rows.map((row) => ({
+                header: row.headers,
+                title: row.title,
+                description: row.body,
+                id: row.command,
+              })),
+            }));
+
+            let sections = transformedData;
+            const listMessage = {
+              title: data.title,
+              sections,
+            };
+            result.push({
+              name: "single_select",
+              buttonParamsJson: JSON.stringify(listMessage),
+            });
+          }
         }
-        if (copy.key.participant)
-          sender = copy.key.participant = sender || copy.key.participant;
-        if (copy.key.remoteJid.includes("@s.whatsapp.net"))
-          sender = sender || copy.key.remoteJid;
-        else if (copy.key.remoteJid.includes("@broadcast"))
-          sender = sender || copy.key.remoteJid;
-        copy.key.remoteJid = jid;
-        copy.key.fromMe = areJidsSameUser(sender, conn.user.id);
-        return proto.WebMessageInfo.fromObject(copy);
+
+        let msg;
+        if (json.url) {
+          let file = await conn.getFile(json.url);
+          let mime = file.mime.split("/")[0];
+          let mediaMessage = await prepareWAMessageMedia(
+            {
+              ...(mime === "image"
+                ? {
+                    image: file.data,
+                  }
+                : mime === "video"
+                  ? {
+                      video: file.data,
+                    }
+                  : {
+                      document: file.data,
+                      mimetype: file.mime,
+                      fileName:
+                        json.filename || "Yoshida." + extension(file.mime),
+                    }),
+            },
+            {
+              upload: conn.waUploadToServer,
+            },
+          );
+
+          msg = generateWAMessageFromContent(
+            jid,
+            {
+              viewOnceMessage: {
+                message: {
+                  messageContextInfo: {
+                    deviceListMetadata: {},
+                    deviceListMetadataVersion: 2,
+                  },
+                  interactiveMessage: proto.Message.InteractiveMessage.create({
+                    body: proto.Message.InteractiveMessage.Body.create({
+                      text: json.body,
+                    }),
+                    footer: proto.Message.InteractiveMessage.Footer.create({
+                      text: json.footer,
+                    }),
+                    header: proto.Message.InteractiveMessage.Header.create({
+                      hasMediaAttachment: true,
+                      ...mediaMessage,
+                    }),
+                    nativeFlowMessage:
+                      proto.Message.InteractiveMessage.NativeFlowMessage.create(
+                        {
+                          buttons: result,
+                        },
+                      ),
+                    ...options,
+                  }),
+                },
+              },
+            },
+            {
+              userJid: conn.user.jid,
+              quoted,
+              upload: conn.waUploadToServer,
+            },
+          );
+        } else {
+          msg = generateWAMessageFromContent(
+            jid,
+            {
+              viewOnceMessage: {
+                message: {
+                  messageContextInfo: {
+                    deviceListMetadata: {},
+                    deviceListMetadataVersion: 2,
+                  },
+                  interactiveMessage: proto.Message.InteractiveMessage.create({
+                    body: proto.Message.InteractiveMessage.Body.create({
+                      text: json.body,
+                    }),
+                    footer: proto.Message.InteractiveMessage.Footer.create({
+                      text: json.footer,
+                    }),
+                    header: proto.Message.InteractiveMessage.Header.create({
+                      hasMediaAttachment: false,
+                    }),
+                    nativeFlowMessage:
+                      proto.Message.InteractiveMessage.NativeFlowMessage.create(
+                        {
+                          buttons:
+                            result.length > 0
+                              ? result
+                              : [
+                                  {
+                                    text: "",
+                                  },
+                                ],
+                        },
+                      ),
+                    ...options,
+                  }),
+                },
+              },
+            },
+            {
+              userJid: conn.user.jid,
+              quoted,
+              upload: conn.waUploadToServer,
+            },
+          );
+        }
+
+        await conn.relayMessage(msg.key.remoteJid, msg.message, {
+          messageId: msg.key.id,
+        });
+        return msg;
       },
-      enumerable: false,
+      enumerable: true,
+    },
+
+    /**
+     * Sends a status with mentions to a WhatsApp contact or group.
+     * @param {string} jids - The JIDS of the recipient.
+     * @param {Object} [content] - Additional content for the status.
+     * @returns {Promise<Object>} A promise that resolves to the message object.
+     */
+    sendStatusMention: {
+      async value(content, jids) {
+        const msg = await generateWAMessage(STORIES_JID, content, {
+          upload: conn.waUploadToServer,
+        });
+
+        const fetchParticipants = async (...jids) => {
+          let results = [];
+          for (const jid of jids) {
+            let { participants } = await conn.groupMetadata(jid);
+            participants = participants.map(({ id }) => id);
+            results = results.concat(participants);
+          }
+          return results;
+        };
+
+        let statusJidList = [];
+        for (const _jid of jids) {
+          if (_jid.endsWith("@g.us")) {
+            for (const jid of await fetchParticipants(_jid)) {
+              statusJidList.push(jid);
+            }
+          } else {
+            statusJidList.push(_jid);
+          }
+        }
+        statusJidList = [...new Set(statusJidList)];
+
+        await conn.relayMessage(msg.key.remoteJid, msg.message, {
+          messageId: msg.key.id,
+          statusJidList,
+          additionalNodes: [
+            {
+              tag: "meta",
+              attrs: {},
+              content: [
+                {
+                  tag: "mentioned_users",
+                  attrs: {},
+                  content: jids.map((jid) => ({
+                    tag: "to",
+                    attrs: {
+                      jid,
+                    },
+                    content: undefined,
+                  })),
+                },
+              ],
+            },
+          ],
+        });
+
+        for (const jid of jids) {
+          let type = jid.endsWith("@g.us")
+            ? "groupStatusMentionMessage"
+            : "statusMentionMessage";
+          await conn.relayMessage(
+            jid,
+            {
+              [type]: {
+                message: {
+                  protocolMessage: {
+                    key: msg.key,
+                    type: 25,
+                  },
+                },
+              },
+            },
+            {
+              additionalNodes: [
+                {
+                  tag: "meta",
+                  attrs: {
+                    is_status_mention: "true",
+                  },
+                  content: undefined,
+                },
+              ],
+            },
+          );
+        }
+
+        return msg;
+      },
+      enumerable: true,
     },
 
     serialize: {
       async value(m) {
         return await serialize(conn, m, store);
       },
+      enumerable: true,
     },
   });
 
@@ -381,9 +756,9 @@ function Client({ conn, store }) {
 }
 
 /**
- * Serialize Message
+ * serialize message
  * @param {ReturnType<typeof makeWASocket>} conn
- * @param {proto.WebMessageInfo} m
+ * @param {proto.WebMessageInfo} msg
  * @param {store} memory store
  */
 async function serialize(conn, msg, store) {
@@ -408,7 +783,8 @@ async function serialize(conn, msg, store) {
       m.id.startsWith("BAE5") ||
       m.id.startsWith("3EB") ||
       m.id.startsWith("FELZ") ||
-      m.id.startsWith("B1E");
+      m.id.startsWith("B1E") ||
+      m.id.startsWith("Fizz");
     m.chat = m.key.remoteJid.startsWith("status")
       ? jidNormalizedUser(m.key?.participant || msg.participant)
       : jidNormalizedUser(m.key.remoteJid);
@@ -483,8 +859,8 @@ async function serialize(conn, msg, store) {
       typeof msg.messageTimestamp === "number"
         ? msg.messageTimestamp * 1000
         : m.msg.timestampMs * 1000;
+    m.download = () => conn.downloadMediaMessage(m);
     m.isMedia = !!m.msg?.mimetype || !!m.msg?.thumbnailDirectPath;
-    m.download = (filename) => conn.downloadMediaMessage(m.message, filename);
 
     m.isQuoted = false;
     if (m.msg?.contextInfo?.quotedMessage) {
@@ -500,8 +876,7 @@ async function serialize(conn, msg, store) {
           m.quoted.message[m.quoted.type];
         m.quoted.isMedia =
           !!m.quoted.msg?.mimetype || !!m.quoted.msg?.thumbnailDirectPath;
-        m.quoted.download = (filename) =>
-          conn.downloadMediaMessage(m.quoted.message, filename);
+        m.quoted.download = () => conn.downloadMediaMessage(m.quoted);
         m.quoted.key = {
           remoteJid: m.msg?.contextInfo?.remoteJid || m.chat,
           participant: jidNormalizedUser(m.msg?.contextInfo?.participant),
@@ -529,7 +904,8 @@ async function serialize(conn, msg, store) {
           m.quoted.id.startsWith("BAE5") ||
           m.quoted.id.startsWith("3EB") ||
           m.quoted.id.startsWith("FELZ") ||
-          m.quoted.id.startsWith("B1E");
+          m.quoted.id.startsWith("B1E") ||
+          m.quoted.id.startsWith("Fizz");
         m.quoted.isGroup = m.quoted.chat.endsWith("@g.us");
         m.quoted.sender = jidNormalizedUser(
           m.msg?.contextInfo?.participant || m.quoted.chat,
@@ -595,7 +971,6 @@ async function serialize(conn, msg, store) {
       }
     }
   }
-
   m.react = async (text) => {
     await conn.sendMessage(m.chat, {
       react: {
@@ -604,9 +979,9 @@ async function serialize(conn, msg, store) {
       },
     });
   };
-
   m.reply = async (text, options = {}) => {
     if (typeof text === "string") {
+      await conn.sendPresenceUpdate("composing", m.chat);
       return await conn.sendMessage(
         m.chat,
         { text, mentions: Func.parseMention(text), ...options },
