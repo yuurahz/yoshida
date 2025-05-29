@@ -9,6 +9,8 @@
 
 > The addition of interactive AI features that allow for a more engaging and realistic conversation experience ✨.
 
+> Uses a session storage system in PostgresQL and local storage, can be customized by the user.
+
 ## Install and run
 ```Bash
 $ npm install
@@ -17,10 +19,18 @@ $ npm start
 
 ## Set in environment variabel
 ```Javascript
+#additional setup
 TZ= //The time zone you want to use
 DATABASE_URL= //your mongodb url (opsional)
 PAIRING_STATE= //Boolean
 PAIRING_NUMBER= //number to be connected to the bot
+
+#postgreesql config (visit here: https://console.aiven.io)
+POSTGRES_HOST= //your potgree database host
+POSTGRES_PASSWORD= //your postgre database pass
+POSTGRES_USER= //your postgre database user
+POSTGRES_DATABASE= //your postgre databases
+POSTGRES_PORT= //your potgre database port
 ```
 
 ## pm2 configuration (optional)
@@ -100,7 +110,7 @@ case "tes": {
 
 ### Database
 - [x] [MongoDB](https://mongodb.com/) (recommended)
-
+- [x] [PostgreSQL](https://console.aiven.io) (recommended)
 ---
 
 ### Heroku Buildpack (For heroku user)
@@ -124,7 +134,7 @@ case "tes": {
 If you experience any problems or errors, please contact us [here.](https://chat.whatsapp.com/HnoKcpzYsKE5y0thEM060h)
 
 ## Tqto
- [![nando](https://github.com/rifnd.png?size=50)](https://github.com/rifnd) | [![Adi](https://github.com/yuurahz.png?size=50)](https://github.com/yuurahz) | [![Baileys](https://github.com/Whiskeysockets.png?size=50)](https://github.com/Whiskeysockets)
+ [![nando](https://github.com/rifnd.png?size=50)](https://github.com/rifnd) | [![Adi](https://github.com/yuurahz.png?size=50)](https://github.com/yuurahz) | [![Baileys](https://github.com/Whiskeysockets.png?size=50)](https://github.com/Whiskeysockets) | [![Zaid](https://github.com/ItsxZaid.png?size=50)](https://github.com/ItsxZaid)
 ----|----|----
-[Nando](https://github.com/rifnd) | [Adi](https://github.com/yuurahz) | [Baileys](https://github.com/Whiskeysockets)
- Inspiration | Developer | Library Provider
+[Nando](https://github.com/rifnd) | [Adi](https://github.com/yuurahz) | [Baileys](https://github.com/Whiskeysockets) | [Zaid](https://github.com/ItsxZaid)
+ Inspiration | Developer | Library Provider | Creator of Postgres session
