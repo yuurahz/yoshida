@@ -1,139 +1,283 @@
-<p align="center"> <img src="https://komarev.com/ghpvc/?username=yuurahz&label=Repo%20views&color=0e75b6&style=flat" alt="yuurahz" /> </p>
+# 🤖 YOSHIDA-BOT
 
-## YOSHIDA-BOT
-![Layout](https://files.catbox.moe/g155d2.jpg)
+<div align="center">
+  <img src="https://files.catbox.moe/g155d2.jpg" alt="Yoshida Bot" width="500"/>
+  
+  ![GitHub Repo views](https://komarev.com/ghpvc/?username=yuurahz&label=Repository%20Views&color=0e75b6&style=for-the-badge)
+  ![GitHub stars](https://img.shields.io/github/stars/yuurahz/yoshida-bot?style=for-the-badge&color=gold)
+  ![GitHub forks](https://img.shields.io/github/forks/yuurahz/yoshida-bot?style=for-the-badge&color=blue)
+  ![GitHub issues](https://img.shields.io/github/issues/yuurahz/yoshida-bot?style=for-the-badge&color=red)
+  ![GitHub license](https://img.shields.io/github/license/yuurahz/yoshida-bot?style=for-the-badge&color=green)
+</div>
 
-## Introduction
+---
 
-> **YOSHIDA** is a whatsapp bot with many multifunctional features, using **[BAILEYS](https://github.com/Whiskeysockets/Baileys)** for free
+## ✨ Introduction
 
-> The addition of interactive AI features that allow for a more engaging and realistic conversation experience ✨.
+**YOSHIDA** is a powerful and versatile WhatsApp bot packed with multifunctional features, built using **[Baileys](https://github.com/Whiskeysockets/Baileys)** library for free!
 
-> Uses a session storage system in PostgresQL and local storage, can be customized by the user.
+### 🌟 Key Features
+- 🤖 **Interactive AI Integration** - Engaging and realistic conversation experience
+- 💾 **Dual Storage System** - PostgreSQL and Local storage options
+- 🔧 **Highly Customizable** - Tailor the bot to your needs
+- 🚀 **Fast & Reliable** - Optimized performance
+- 📱 **Multi-Platform** - Works across different devices
 
-## Install and run
-```Bash
-$ npm install
-$ npm start
+---
+
+## 🚀 Quick Start
+
+### 📋 Prerequisites
+- Node.js v16+ 
+- NPM or Yarn
+- WhatsApp Account
+
+### ⚡ Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yuurahz/yoshida-bot.git
+
+# Navigate to project directory
+cd yoshida-bot
+
+# Install dependencies
+npm install
+
+# Start the bot
+npm start
 ```
 
-## Set in environment variabel
-```Javascript
-#additional setup
-TZ= //The time zone you want to use
-DATABASE_URL= //your mongodb url (opsional)
-PAIRING_STATE= //Boolean
-PAIRING_NUMBER= //number to be connected to the bot
+---
 
-#postgreesql config (visit here: https://console.aiven.io)
-POSTGRES_HOST= //your potgree database host
-POSTGRES_PASSWORD= //your postgre database pass
-POSTGRES_USER= //your postgre database user
-POSTGRES_DATABASE= //your postgre databases
-POSTGRES_PORT= //your potgre database port
+## ⚙️ Environment Configuration
+
+Create a `.env` file in your project root and configure the following:
+
+```bash
+# 🌍 General Configuration
+TZ=Asia/Jakarta                    # Your timezone
+DATABASE_STATE=json                # Database type: json/mongo/postgresql
+DATABASE_URL=your_mongodb_url      # MongoDB URL (optional)
+
+# 📱 WhatsApp Configuration
+PAIRING_STATE=true                 # Enable pairing mode
+PAIRING_NUMBER=628XXX         # Your WhatsApp number
+
+# 🗄️ Session Configuration
+SESSION_TYPE=local            # Session type: local/postgresql (default local)
+SESSION_NAME=yoshida_session       # Session identifier
+
+# 🐘 PostgreSQL Configuration
+POSTGRES_HOST=your_postgres_host
+POSTGRES_PASSWORD=your_postgres_password
+POSTGRES_USER=your_postgres_user
+POSTGRES_DATABASE=your_postgres_database
+POSTGRES_PORT=your_postgres_port
+SSL_CERT=your_ssl_certificate      # SSL certificate for secure connection
+
+# 🎭 Bot Behavior
+REACT_STATUS=👀,❤️,🔥,💯,✨        # Status reaction emojis
 ```
 
-## pm2 configuration (optional)
-```Javascript
+---
+
+## 🔧 PM2 Configuration (Production)
+
+Create `ecosystem.config.js` for production deployment:
+
+```javascript
 module.exports = {
-  apps: [
-    {
-      name: "yoshida", //app name for pm2
-      script: "./index.js", //main file to run
-      node_args: "--max-old-space-size=2048", //maximum memory size
-      env: {
-        NODE_ENV: "production", //optional
-      },
-      env_development: {
-        NODE_ENV: "development", //optional
-      },
+  apps: [{
+    name: "yoshida-bot",
+    script: "./index.js",
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: "2G",
+    node_args: "--max-old-space-size=2048",
+    env: {
+      NODE_ENV: "production"
     },
-  ],
+    env_development: {
+      NODE_ENV: "development"
+    }
+  }]
 };
 ```
 
-## Plugins execution
-```Javascript
+**Start with PM2:**
+```bash
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup
+```
+
+---
+
+## 🛠️ Plugin Development
+
+### 🎯 Command Plugin Structure
+
+```javascript
 module.exports = {
-   help: ['display'],
-   tags: ['category'],
-   command: /^(command)$/i,
-   run: async (m, {
-      Func
-   }) => {
+   help: ['ping', 'test'],           // Command help display
+   tags: ['main'],                   // Plugin category
+   command: /^(ping|test)$/i,        // Command regex pattern
+   
+   run: async (m, { conn, Func }) => {
       try {
-         // your code
-      } catch (e) {
-         return m.reply(Func.jsonFormat(e))
+         // 🎉 Your awesome code here
+         m.reply('🏓 Pong! Bot is running smoothly!');
+      } catch (error) {
+         console.error(error);
+         return m.reply(Func.jsonFormat(error));
       }
    },
-   group: Boolean,
-   admin: Boolean,
-   limit: Boolean,
-   premium: Boolean,
-   botAdmin: Boolean,
-   owner: Boolean
-}
+   
+   // 🔒 Permission Settings
+   group: false,        // Group only command
+   admin: false,        // Admin only command  
+   limit: true,         // Use command limits
+   premium: false,      // Premium user only
+   botAdmin: false,     // Bot must be admin
+   owner: false         // Owner only command
+};
 ```
 
-## Plugins events
-```Javascript
+### 🎪 Event Plugin Structure
+
+```javascript
 module.exports = {
-   async before(m, {
-      Func
-   }) {
+   async before(m, { conn, Func, store }) {
       try {
-         // your code
-      } catch (e) {
-         return m.reply(Func.jsonFormat(e))
+         // 🎭 Pre-processing logic
+         if (m.text && m.text.includes('hello')) {
+            m.reply('👋 Hello there!');
+         }
+      } catch (error) {
+         console.error(error);
+         return m.reply(Func.jsonFormat(error));
       }
-      return true
+      return true; // Continue to next handler
    }
+};
+```
+
+### 🎮 Case Handler Structure
+
+```javascript
+case "example": {
+   // 🎲 Simple case execution
+   m.reply("✨ Example command executed!");
+   break;
+}
+
+case "advanced": {
+   try {
+      // 🚀 Advanced logic with error handling
+      const result = await someAsyncOperation();
+      m.reply(`🎊 Result: ${result}`);
+   } catch (error) {
+      m.reply(`❌ Error: ${error.message}`);
+   }
+   break;
 }
 ```
 
-## Case execution
-```Javascript
-case "tes": {
-  m.reply("on!");
-  break;
-}
-```
+---
+
+## 🏗️ Deployment Options
+
+### 🌐 Recommended Hosting Platforms
+
+| Platform | Type | Recommendation |
+|----------|------|----------------|
+| [![Heroku](https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)](https://heroku.com/) | Cloud Platform | ⭐⭐⭐⭐⭐ |
+| [![DigitalOcean](https://img.shields.io/badge/DigitalOcean-0080FF?style=for-the-badge&logo=digitalocean&logoColor=white)](https://digitalocean.com/) | VPS/RDP | ⭐⭐⭐⭐⭐ |
+| [![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/) | Cloud Platform | ⭐⭐⭐⭐ |
+| [![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com/) | Cloud Platform | ⭐⭐⭐⭐ |
+
+### 🗄️ Database Options
+
+| Database | Use Case | Performance |
+|----------|----------|-------------|
+| [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com/) | Large Scale | ⭐⭐⭐⭐⭐ |
+| [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://console.aiven.io) | Session Storage | ⭐⭐⭐⭐⭐ |
+| ![JSON](https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white) | Development | ⭐⭐⭐ |
 
 ---
 
-### Server recommended
-- [x] [Heroku](https://heroku.com/)
-- [x] VPS/RDP [DigitalOcean](https://digitalocean.com/)
-- [x] VPS NAT [HostData](https://hostdata.id/)
-- [x] Panel [Optiklink](https://optiklink.com/)
+## 🔨 Heroku Buildpacks
 
-### Database
-- [x] [MongoDB](https://mongodb.com/) (recommended)
-- [x] [PostgreSQL](https://console.aiven.io) (recommended)
----
+For Heroku deployment, add these buildpacks:
 
-### Heroku Buildpack (For heroku user)
-| BuildPack | LINK |
-|-----------|------|
-| **FFMPEG** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
-| **IMAGEMAGICK** | [![here](https://img.shields.io/badge/Link-here-blue)](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
+| Buildpack | Purpose | Link |
+|-----------|---------|------|
+| **FFMPEG** | Media Processing | [![Add Buildpack](https://img.shields.io/badge/Add-Buildpack-purple?style=for-the-badge)](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
+| **ImageMagick** | Image Processing | [![Add Buildpack](https://img.shields.io/badge/Add-Buildpack-purple?style=for-the-badge)](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
 
 ---
 
-## S&K
+## 📜 Terms & Conditions
 
-- Not For Sale (unless you have added some features to it)
-- Don't forget give star this repo :)
-- Don't use this repository wrong
-- Do not use fake panels, usually have bocil JB, use trusted panels, there is a price there is quality
+### ✅ Allowed
+- ✨ Personal and educational use
+- 🔧 Modifications and improvements
+- 🌟 Contributions to the project
+
+### ❌ Not Allowed
+- 💰 Commercial sale without significant modifications
+- 🏴‍☠️ Removing credits or license
+- 🚫 Malicious or harmful usage
+- 🤖 Creating fake or misleading copies
+
+### 🙏 Please Remember
+- ⭐ Give this repository a star if you find it helpful
+- 🔗 Keep original credits intact
+- 🛡️ Use trusted hosting platforms
+- 📝 Report issues responsibly
 
 ---
 
-## Note
-If you experience any problems or errors, please contact us [here.](https://chat.whatsapp.com/HnoKcpzYsKE5y0thEM060h)
+## 🆘 Support & Community
 
-## Tqto
- [![nando](https://github.com/rifnd.png?size=50)](https://github.com/rifnd) | [![Adi](https://github.com/yuurahz.png?size=50)](https://github.com/yuurahz) | [![Baileys](https://github.com/Whiskeysockets.png?size=50)](https://github.com/Whiskeysockets) | [![Zaid](https://github.com/ItsxZaid.png?size=50)](https://github.com/ItsxZaid)
-----|----|----
-[Nando](https://github.com/rifnd) | [Adi](https://github.com/yuurahz) | [Baileys](https://github.com/Whiskeysockets) | [Zaid](https://github.com/ItsxZaid) | Inspiration | Developer | Library Provider | Creator of Postgres session
+Need help or want to contribute? Join our community!
+
+<div align="center">
+  
+[![WhatsApp Group](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/HnoKcpzYsKE5y0thEM060h)
+[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-red?style=for-the-badge&logo=github)](https://github.com/yuurahz/yoshida-bot/issues)
+[![Discussions](https://img.shields.io/badge/GitHub-Discussions-blue?style=for-the-badge&logo=github)](https://github.com/yuurahz/yoshida-bot/discussions)
+
+</div>
+
+---
+
+## 🎉 Contributors & Credits
+
+<div align="center">
+
+### 👥 Amazing Contributors
+
+| [<img src="https://github.com/rifnd.png?size=80" width="80"><br>**Nando**<br>*Inspiration*](https://github.com/rifnd) | [<img src="https://github.com/yuurahz.png?size=80" width="80"><br>**Adi**<br>*Developer*](https://github.com/yuurahz) | [<img src="https://github.com/Whiskeysockets.png?size=80" width="80"><br>**Baileys**<br>*Library Provider*](https://github.com/Whiskeysockets) | [<img src="https://github.com/ItsxZaid.png?size=80" width="80"><br>**Zaid**<br>*Postgres Session*](https://github.com/ItsxZaid) |
+|:---:|:---:|:---:|:---:|
+
+### 🌟 Special Thanks
+- All contributors and users who make this project better
+- The open-source community for inspiration and support
+- Beta testers who help improve stability
+
+</div>
+
+---
+
+<div align="center">
+
+### 💫 Made with ❤️ by the Yoshida Team
+
+![Wave](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer)
+
+**Don't forget to ⭐ star this repository if you found it helpful!**
+
+</div>
