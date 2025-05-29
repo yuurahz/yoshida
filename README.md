@@ -4,10 +4,10 @@
   <img src="https://files.catbox.moe/g155d2.jpg" alt="Yoshida Bot" width="500"/>
   
   ![GitHub Repo views](https://komarev.com/ghpvc/?username=yuurahz&label=Repository%20Views&color=0e75b6&style=for-the-badge)
-  ![GitHub stars](https://img.shields.io/github/stars/yuurahz/yoshida-bot?style=for-the-badge&color=gold)
-  ![GitHub forks](https://img.shields.io/github/forks/yuurahz/yoshida-bot?style=for-the-badge&color=blue)
-  ![GitHub issues](https://img.shields.io/github/issues/yuurahz/yoshida-bot?style=for-the-badge&color=red)
-  ![GitHub license](https://img.shields.io/github/license/yuurahz/yoshida-bot?style=for-the-badge&color=green)
+  ![GitHub stars](https://img.shields.io/github/stars/yuurahz/yoshida?style=for-the-badge&color=gold)
+  ![GitHub forks](https://img.shields.io/github/forks/yuurahz/yoshida?style=for-the-badge&color=blue)
+  ![GitHub issues](https://img.shields.io/github/issues/yuurahz/yoshida?style=for-the-badge&color=red)
+  ![GitHub license](https://img.shields.io/github/license/yuurahz/yoshida?style=for-the-badge&color=green)
 </div>
 
 ---
@@ -36,10 +36,10 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yuurahz/yoshida-bot.git
+git clone https://github.com/yuurahz/yoshida.git
 
 # Navigate to project directory
-cd yoshida-bot
+cd yoshida
 
 # Install dependencies
 npm install
@@ -89,7 +89,7 @@ Create `ecosystem.config.js` for production deployment:
 ```javascript
 module.exports = {
   apps: [{
-    name: "yoshida-bot",
+    name: "yoshida",
     script: "./index.js",
     instances: 1,
     autorestart: true,
@@ -247,8 +247,8 @@ Need help or want to contribute? Join our community!
 <div align="center">
   
 [![WhatsApp Group](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/HnoKcpzYsKE5y0thEM060h)
-[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-red?style=for-the-badge&logo=github)](https://github.com/yuurahz/yoshida-bot/issues)
-[![Discussions](https://img.shields.io/badge/GitHub-Discussions-blue?style=for-the-badge&logo=github)](https://github.com/yuurahz/yoshida-bot/discussions)
+[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-red?style=for-the-badge&logo=github)](https://github.com/yuurahz/yoshida/issues)
+[![Discussions](https://img.shields.io/badge/GitHub-Discussions-blue?style=for-the-badge&logo=github)](https://github.com/yuurahz/yoshida/discussions)
 
 </div>
 
