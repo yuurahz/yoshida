@@ -1,4 +1,4 @@
-const { S_WHATSAPP_NET } = require("baileys");
+const { S_WHATSAPP_NET } = require("@whiskeysockets/baileys");
 
 module.exports = {
   command: /^(setpp)$/i,
