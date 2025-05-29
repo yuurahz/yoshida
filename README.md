@@ -56,17 +56,17 @@ Create a `.env` file in your project root and configure the following:
 
 ```bash
 # 🌍 General Configuration
-TZ=Asia/Jakarta                    # Your timezone
-DATABASE_STATE=json                # Database type: json/mongo/postgresql
-DATABASE_URL=your_mongodb_url      # MongoDB URL (optional)
+TZ=Asia/Jakarta                 # Your timezone
+DATABASE_STATE=json         # Database type: json/mongo/postgresql
+DATABASE_URL=your_mongodb_url   # MongoDB URL (optional)
 
 # 📱 WhatsApp Configuration
 PAIRING_STATE=true                 # Enable pairing mode
-PAIRING_NUMBER=628XXX         # Your WhatsApp number
+PAIRING_NUMBER=628XXX           # Your WhatsApp number
 
 # 🗄️ Session Configuration
-SESSION_TYPE=local            # Session type: local/postgresql (default local)
-SESSION_NAME=yoshida_session       # Session identifier
+SESSION_TYPE=local                 # Session type: local/postgresql (default local)
+SESSION_NAME=yoshida_session    # Session identifier
 
 # 🐘 PostgreSQL Configuration
 POSTGRES_HOST=your_postgres_host
@@ -74,10 +74,10 @@ POSTGRES_PASSWORD=your_postgres_password
 POSTGRES_USER=your_postgres_user
 POSTGRES_DATABASE=your_postgres_database
 POSTGRES_PORT=your_postgres_port
-SSL_CERT=your_ssl_certificate      # SSL certificate for secure connection
+SSL_CERT=your_ssl_certificate       # SSL certificate for secure connection
 
 # 🎭 Bot Behavior
-REACT_STATUS=👀,❤️,🔥,💯,✨        # Status reaction emojis
+REACT_STATUS=👀,❤️,🔥,💯,✨    # Status reaction emojis
 ```
 
 ---
