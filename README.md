@@ -14,7 +14,8 @@
 
 ## ✨ Introduction
 
-**YOSHIDA** is a powerful and versatile WhatsApp bot packed with multifunctional features, built using **[Baileys](https://github.com/Whiskeysockets/Baileys)** library for free!
+**YOSHIDA** | Intelligent WhatsApp Bot Engine
+Multi-platform WhatsApp automation with AI-powered conversations, flexible storage backends, hot-swappable plugins, and production-ready deployment configs. Built for developers who demand both power and simplicity.
 
 ### 🌟 Key Features
 - 🤖 **Interactive AI Integration** - Engaging and realistic conversation experience
