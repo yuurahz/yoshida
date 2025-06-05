@@ -69,7 +69,7 @@
         database: process.env.POSTGRES_DATABASE,
         ssl: {
           rejectUnauthorized: true,
-          ca: ``, // login/create account here: "https://console.aiven.io" to get ssl certificate
+          ca: process.env.POSTGRES_SSL.replace(/"""/g, ""),
         },
       };
 
@@ -176,11 +176,6 @@
         snapshot: true,
       },
       cachedGroupMetadata: async (jid) => await groupCache.get(jid),
-      getMessage: async (key) => {
-        const jid = await baileys.jidNormalizedUser(key.remoteJid);
-        const msg = await store.loadMessage(jid, key.id);
-        return msg?.message || "";
-      },
       shouldSyncHistoryMessage: (msg) => {
         console.log(Color.greenBright(`[+] Memuat Chat [${msg.progress}%]`));
         return !!msg.syncType;
