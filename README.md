@@ -14,8 +14,7 @@
 
 ## ✨ Introduction
 
-**YOSHIDA** | Intelligent WhatsApp Bot Engine
-Multi-platform WhatsApp automation with AI-powered conversations, flexible storage backends, hot-swappable plugins, and production-ready deployment configs. Built for developers who demand both power and simplicity.
+**YOSHIDA** is a powerful and versatile WhatsApp bot packed with multifunctional features, built using **[Baileys](https://github.com/Whiskeysockets/Baileys)** library for free!
 
 ### 🌟 Key Features
 - 🤖 **Interactive AI Integration** - Engaging and realistic conversation experience
@@ -58,7 +57,7 @@ Create a `.env` file in your project root and configure the following:
 ```bash
 # 🌍 General Configuration
 TZ=Asia/Jakarta                 # Your timezone
-DATABASE_STATE=json         # Database type: json/mongo/postgresql
+DATABASE_STATE=json          # Database type: json/mongo
 DATABASE_URL=your_mongodb_url   # MongoDB URL (optional)
 
 # 📱 WhatsApp Configuration
@@ -75,7 +74,7 @@ POSTGRES_PASSWORD=your_postgres_password
 POSTGRES_USER=your_postgres_user
 POSTGRES_DATABASE=your_postgres_database
 POSTGRES_PORT=your_postgres_port
-SSL_CERT=your_ssl_certificate       # SSL certificate for secure connection
+POSTGRES_SSL="your_ssl_certificate"       # SSL certificate for secure connection
 
 # 🎭 Bot Behavior
 REACT_STATUS=👀,❤️,🔥,💯,✨    # Status reaction emojis
