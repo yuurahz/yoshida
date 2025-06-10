@@ -254,15 +254,6 @@ Need help or want to contribute? Join our community!
 
 ---
 
-## 🎉 Contributors & Credits
-
-<div align="center">
-
-### 👥 Amazing Contributors
-
-| [<img src="https://github.com/rifnd.png?size=80" width="80"><br>**Nando**<br>*Inspiration*](https://github.com/rifnd) | [<img src="https://github.com/yuurahz.png?size=80" width="80"><br>**Adi**<br>*Developer*](https://github.com/yuurahz) | [<img src="https://github.com/Whiskeysockets.png?size=80" width="80"><br>**Baileys**<br>*Library Provider*](https://github.com/Whiskeysockets) | [<img src="https://github.com/ItsxZaid.png?size=80" width="80"><br>**Zaid**<br>*Postgres Session*](https://github.com/ItsxZaid) |
-|:---:|:---:|:---:|:---:|
-
 ### 🌟 Special Thanks
 - All contributors and users who make this project better
 - The open-source community for inspiration and support
@@ -274,7 +265,7 @@ Need help or want to contribute? Join our community!
 
 <div align="center">
 
-### 💫 Made with ❤️ by the Yoshida Team
+### Made with ❤️
 
 ![Wave](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer)
 
