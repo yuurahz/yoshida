@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["enable", "disable"],
+  tags: ["owner"],
   command: /^(on|off|enable|disable)$/i,
   run: async (m, { conn, isOwner, groupSet, setting }) => {
     if (!isOwner && !m.isAdmin) return;

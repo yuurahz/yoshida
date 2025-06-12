@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["join"],
+  tags: ["owner"],
   command: /^(join)$/i,
   run: async (m, { conn }) => {
     let linkRegex = /chat.whatsapp.com\/([0-9A-Za-z]{20,24})/i;
@@ -20,8 +22,7 @@ module.exports = {
       );
       let jumlahHari = 86400000 * m.args[1];
       let now = new Date() * 1;
-      if (now < db.groups[res].expired)
-        db.groups[res].expired += jumlahHari;
+      if (now < db.groups[res].expired) db.groups[res].expired += jumlahHari;
       else db.groups[res].expired = now + jumlahHari;
       if (e.length)
         await m.reply(

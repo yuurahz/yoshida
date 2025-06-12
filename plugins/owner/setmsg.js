@@ -1,15 +1,12 @@
 module.exports = {
-  command: ["setmsg", "setgrmsg"],
+  help: ["setmsg"],
+  tags: ["owner"],
+  command: /^(setmsg)$/i,
   run: async (m, { Func, setting }) => {
     try {
       if (!m.text) return m.reply(explain(m.prefix, m.command));
-      if (m.command === "setmsg") {
-        setting.msg = m.text;
-        m.reply(Func.texted("bold", `Menu Message successfully set.`));
-      } else if (m.command === "setgrmsg") {
-        setting._msg = m.text;
-        m.reply(Func.texted("bold", `Greeting Message successfully set.`));
-      }
+      setting.msg = m.text;
+      m.reply(Func.texted("bold", `Menu Message successfully set.`));
     } catch (e) {
       return m.reply(Func.jsonFormat(e));
     }

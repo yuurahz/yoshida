@@ -2,9 +2,10 @@ const cp = require("child_process");
 const { promisify, inspect, format } = require("util");
 const exec = promisify(cp.exec).bind(cp);
 const syntaxerror = require("syntax-error");
+
 let handler = (m) => m;
 handler.before = async function (m, _2) {
-  let { conn, plugins, isOwner, Func, setting, store } = _2;
+  let { conn, plugins, isOwner, Func, setting, store, quoted } = _2;
   if (!isOwner && !m.fromMe) return;
   let _return;
   let _syntax = "";
@@ -24,6 +25,7 @@ handler.before = async function (m, _2) {
         "Func",
         "setting",
         "store",
+        "quoted",
         "Array",
         "process",
         "plugins",
@@ -46,6 +48,7 @@ handler.before = async function (m, _2) {
         Func,
         setting,
         store,
+        quoted,
         CustomArray,
         process,
         plugins,
@@ -87,6 +90,7 @@ handler.before = async function (m, _2) {
   }
 };
 module.exports = handler;
+
 class CustomArray extends Array {
   constructor(...args) {
     if (typeof args[0] == "number") return super(Math.min(args[0], 10000));

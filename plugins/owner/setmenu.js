@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["setmenu"],
+  tags: ["owner"],
   command: /^(setmenu)$/i,
   run: async (m, { Func, setting }) => {
     try {

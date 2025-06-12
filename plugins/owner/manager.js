@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["+owner", "-owner", "-prem", "block", "unblock"],
+  tags: ["owner"],
   command: /^(\+owner|\-owner|\-prem|block|unblock)$/i,
   run: async (m, { Func, conn }) => {
     try {

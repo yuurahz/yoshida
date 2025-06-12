@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["addprem"],
+  tags: ["owner"],
   command: /^(add|tambah|\+)p(rem)?$/i,
   run: async (m, { conn, Func }) => {
     if (m.isQuoted) {

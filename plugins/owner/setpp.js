@@ -1,6 +1,8 @@
 const { S_WHATSAPP_NET } = require("@whiskeysockets/baileys");
 
 module.exports = {
+  help: ["setpp"],
+  tags: ["owner"],
   command: /^(setpp)$/i,
   run: async (m, { Func, quoted, conn }) => {
     try {

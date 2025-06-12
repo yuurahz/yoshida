@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["deleteuser"],
+  tags: ["owner"],
   command: /^(del(ete)?user)$/i,
   run: async (m, { conn, Func }) => {
     m.text = no(m.text);

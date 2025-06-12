@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["setlink"],
+  tags: ["owner"],
   command: /^(setlink)$/i,
   run: async (m, { Func, setting }) => {
     if (!m.text)

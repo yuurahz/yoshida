@@ -1,7 +1,8 @@
 module.exports = {
+  help: ["pay"],
+  tags: ["owner"],
   command: /^(pay)$/i,
   run: async (m, { conn, isOwner }) => {
-    if (!isOwner) return !0;
     let type = (m.args[0] || "").toLowerCase();
     let cht = (m.args[0] || "").toLowerCase();
     let who =
@@ -45,7 +46,8 @@ module.exports = {
         }
       }
     } catch (e) {
-      m.reply(cok);
+      return m.reply(cok);
     }
   },
+  owner: true,
 };

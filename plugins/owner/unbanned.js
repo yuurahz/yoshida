@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["unbanned"],
+  tags: ["owner"],
   command: /^(unbanned|unban|unbanchat)$/i,
   run: async (m, { Func, conn, isOwner }) => {
     let who;

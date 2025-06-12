@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["setwm"],
+  tags: ["owner"],
   command: /^(setwm)$/i,
   run: async (m, { Func, setting }) => {
     try {

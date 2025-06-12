@@ -1,6 +1,8 @@
 module.exports = {
+  help: ["setcover"],
+  tags: ["owner"],
   command: /^(setcover)$/i,
-  run: async (m, { Func, conn, quoted, setting }) => {
+  run: async (m, { Func, quoted, setting }) => {
     try {
       let mime = (quoted.msg || quoted).mimetype || "";
       if (!/image\/(jpe?g|png)/.test(mime))

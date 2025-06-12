@@ -1,4 +1,6 @@
 module.exports = {
+  help: ["plugen", "plugdis"],
+  tags: ["owner"],
   command: /^(plugen|plugdis)$/i,
   run: async (m, { Func, setting, plugins }) => {
     if (!m.args || !m.args[0])
