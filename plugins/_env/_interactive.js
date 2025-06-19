@@ -9,7 +9,9 @@ const { logic, commands } = require("@system/logic");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 if (!process.env.GEMINI_API_KEY) {
-  console.error("GEMINI_API_KEY tidak ditemukan di environment variables, fitur ai interactive tidak akan berfungsi.");
+  console.error(
+    "GEMINI_API_KEY tidak ditemukan di environment variables, fitur ai interactive tidak akan berfungsi.",
+  );
 }
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -326,9 +328,9 @@ module.exports = {
         return true;
       }
 
-      cleanExpiredSessions(db);
+      await cleanExpiredSessions(db);
 
-      let mime = (q && (q.msg || q).mimetype) || "";
+      let mime = (q.msg || q).mimetype || "";
       const geminiModel = genAI.getGenerativeModel({
         model: "gemini-2.0-flash",
         systemInstruction: logic
@@ -370,7 +372,7 @@ module.exports = {
           console.log("Gemini Response Text:", response);
         }
       } else if (mime.startsWith("audio/")) {
-        let media = await q.download();
+        let media = await q?.download();
         const { filepath } = await saveTempFile(media, mime, "audio");
         try {
           response = await processMediaContent(
@@ -386,7 +388,7 @@ module.exports = {
           }
         }
       } else if (mime.startsWith("image/")) {
-        let media = await q.download();
+        let media = await q?.download();
 
         if (mime === "image/webp" || !/image\/(png|jpe?g|webp)/.test(mime)) {
           const { filepath } = await saveTempFile(media, mime, "image");
@@ -414,56 +416,28 @@ module.exports = {
           }
         } else {
           try {
-            if (!upload || typeof upload.tmpfiles !== "function") {
-              const { filepath } = await saveTempFile(media, mime, "image");
-              try {
-                const fileContent = fs.readFileSync(filepath);
-                const imageBase64 = Buffer.from(fileContent).toString("base64");
+            const imageBase64 = media.toString("base64");
 
-                const imagePart = {
-                  inlineData: {
-                    data: imageBase64,
-                    mimeType: mime,
-                  },
-                };
+            const imagePart = {
+              inlineData: {
+                data: imageBase64,
+                mimeType: mime,
+              },
+            };
 
-                const parts = [
-                  imagePart,
-                  m.body || "Tolong jelaskan tentang gambar ini",
-                ];
-                const result = await chatSession.sendMessage(parts);
-                response = result.response.text();
-              } finally {
-                if (fs.existsSync(filepath)) {
-                  fs.unlinkSync(filepath);
-                }
-              }
-            } else {
-              const link = await upload.tmpfiles(media);
-              const imageResp = await fetch(link).then((r) => r.arrayBuffer());
-              const imageBase64 = Buffer.from(imageResp).toString("base64");
-
-              const imagePart = {
-                inlineData: {
-                  data: imageBase64,
-                  mimeType: mime,
-                },
-              };
-
-              const parts = [
-                imagePart,
-                m.body || "Tolong jelaskan tentang gambar ini",
-              ];
-              const result = await chatSession.sendMessage(parts);
-              response = result.response.text();
-            }
+            const parts = [
+              imagePart,
+              m.body || "Tolong jelaskan tentang gambar ini",
+            ];
+            const result = await chatSession.sendMessage(parts);
+            response = result.response.text();
           } catch (error) {
             console.error("Error processing image:", error);
             throw new Error(`Gagal memproses gambar: ${error.message}`);
           }
         }
       } else if (mime.startsWith("video/")) {
-        let media = await q.download();
+        let media = await q?.download();
         const { filepath } = await saveTempFile(media, mime, "video");
         try {
           response = await processMediaContent(
@@ -493,7 +467,7 @@ module.exports = {
           "text/csv",
         ].includes(mime)
       ) {
-        let media = await q.download();
+        let media = await q?.download();
         const { filepath } = await saveTempFile(media, mime, "document");
         try {
           response = await processMediaContent(
