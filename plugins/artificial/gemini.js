@@ -10,7 +10,9 @@ const { logic, commands } = require("@system/logic");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 if (!process.env.GEMINI_API_KEY) {
-  console.error("GEMINI_API_KEY tidak ditemukan di environment variables, fitur ai interactive tidak akan berfungsi.")
+  console.error(
+    "GEMINI_API_KEY tidak ditemukan di environment variables, fitur ai interactive tidak akan berfungsi.",
+  );
 }
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -319,7 +321,7 @@ module.exports = {
   command: /^(gemini|ai|resetaichat)$/i,
   run: async (m, { Func, quoted: q, conn }) => {
     try {
-      cleanExpiredSessions(db);
+      await cleanExpiredSessions(db);
 
       if (m.command === "resetaichat") {
         if (db.users[m.sender]?.activity?.geminiChat) {
@@ -425,9 +427,7 @@ module.exports = {
           }
         } else {
           try {
-            const link = await upload.tmpfiles(media);
-            const imageResp = await fetch(link).then((r) => r.arrayBuffer());
-            const imageBase64 = Buffer.from(imageResp).toString("base64");
+            const imageBase64 = media.toString("base64");
 
             const imagePart = {
               inlineData: {
