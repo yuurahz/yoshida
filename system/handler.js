@@ -1,5 +1,6 @@
 const fs = require("fs");
 const cron = require("node-cron");
+const API = require("@system/api");
 const { Function: Func, Plugins, Color } = new (require("@yoshx/func"))();
 const { plugins } = Plugins;
 
@@ -29,15 +30,16 @@ module.exports = async (conn, m, store) => {
       groupSet.expired != 0
     ) {
       return conn
-        .reply(
+        .sendMessage(
           m.chat,
-          Func.texted(
-            "bold",
-            "Bot time has expired and will leave from this group, thank you.",
-            {
-              mentions: m.metadata.participants.map((v) => v.id),
-            },
-          ),
+          {
+            text: Func.texted(
+              "bold",
+              "Bot time has expired and will leave from this group, thank you.",
+            ),
+            mentions: m.metadata.participants.map((v) => v.id),
+          },
+          { ephemeralExpiration: m.expiration },
         )
         .then(async () => {
           groupSet.expired = 0;
@@ -46,12 +48,15 @@ module.exports = async (conn, m, store) => {
     }
     if (users && new Date() * 1 >= users.expired && users.expired != 0) {
       return conn
-        .reply(
+        .sendMessage(
           m.sender,
-          Func.texted(
-            "bold",
-            "Your premium package has expired, thank you for buying and using our service.",
-          ),
+          {
+            text: Func.texted(
+              "bold",
+              "Your premium package has expired, thank you for buying and using our service.",
+            ),
+          },
+          { ephemeralExpiration: m.expiration },
         )
         .then(async () => {
           users.premium = false;
@@ -138,6 +143,7 @@ module.exports = async (conn, m, store) => {
       if (typeof plugin.before === "function")
         if (
           await plugin.before.call(conn, m, {
+            API,
             conn,
             Func,
             store,
@@ -169,8 +175,12 @@ module.exports = async (conn, m, store) => {
                 ? plugin.command === command
                 : false;
         if (!isAccept) continue;
-        users.usebot = Date.now();
-        users.exp += Math.ceil(Math.random() * 10);
+
+        Object.assign(users, {
+          usebot: Date.now(),
+          exp: (users.exp || 0) + Math.ceil(Math.random() * 10),
+        });
+
         m.plugin = name;
         if (m.chat in db.groups || m.sender in db.users) {
           if (
@@ -292,6 +302,7 @@ module.exports = async (conn, m, store) => {
           continue;
         }
         let extra = {
+          API,
           conn,
           Func,
           store,
@@ -312,16 +323,18 @@ module.exports = async (conn, m, store) => {
             let teks = Func.jsonFormat(e);
             if (teks.match("rate-overlimit")) return;
             if (e.name)
-              conn.reply(
+              conn.sendMessage(
                 process.env.OWNER + "@s.whatsapp.net",
-                `Telah terjadi Error pada Bot
+                {
+                  text: `Telah terjadi Error pada Bot
 
 *- Nama Fitur :* ${m.plugin}
 *- Nama Pengirim :* ${m.name} ${m.isGroup ? `*${await conn.getName(m.chat)}*` : ""}
 
 「 *ERROR LOG* 」 
 ${teks}`.trim(),
-                null,
+                },
+                { ephemeralExpiration: m.expiration },
               );
           }
           m.react("✖️");
