@@ -11,10 +11,13 @@ module.exports = async (conn, m, store) => {
     const groupSet = db.groups[m.chat];
     const chats = db.chats[m.chat];
     const setting = db.setting;
-    const isOwner =
-      [conn.decodeJid(conn.user.id).split`@`[0], ...setting.owners]
-        .map((v) => v + "@s.whatsapp.net")
-        .includes(m.sender) || m.fromMe;
+    const isOwner = [
+      conn.decodeJid(conn.user.id).split`@`[0],
+      process.env.OWNER,
+      ...setting.owners,
+    ]
+      .map((v) => v + "@s.whatsapp.net")
+      .includes(m.sender);
     const isPrems = users.premium || isOwner;
     if (setting.autoread) {
       await conn.sendPresenceUpdate("available", m.chat);

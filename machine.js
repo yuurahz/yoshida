@@ -9,7 +9,7 @@
   const NodeCache = require("node-cache");
   const baileys = require("@whiskeysockets/baileys");
   const { Client, serialize } = require("@system/socket");
-  const { Local, MongoDB } = require("@system/provider");
+  const { Local, PostgreSQL } = require("@system/provider");
   const { usePostgreSQLAuthState } = require("postgres-baileys");
   const {
     Color,
@@ -20,11 +20,24 @@
   const { loadPlugins, watchPlugins } = Plugins;
   const { loadLibs, watchLibs } = Libs;
 
+  /** postgreSQL cfg */
+  const postgreSQLConfig = {
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    host: process.env.POSTGRES_HOST,
+    port: parseInt(process.env.POSTGRES_PORT),
+    database: process.env.POSTGRES_DATABASE,
+    ssl: {
+      rejectUnauthorized: true,
+      ca: process.env.POSTGRES_SSL.replace(/"""/g, ""),
+    },
+  };
+
   /** database options */
   const mydb = /json/i.test(process.env.DATABASE_STATE)
     ? new Local()
     : /mongo/i.test(process.env.DATABASE_STATE)
-      ? new MongoDB(process.env.DATABASE_URL, "db_bot")
+      ? new PostgreSQL(postgreSQLConfig, "db_bot")
       : process.exit();
 
   /** database init */
@@ -37,7 +50,6 @@
       setting: {},
       stats: {},
       msgs: {},
-      sticker: {},
       others: {},
     };
     await mydb.write(db);
@@ -60,18 +72,6 @@
       sessionType.toLowerCase() === "postgres"
     ) {
       console.log(Color.cyan("[ SESSION ] Using PostgreSQL session storage"));
-
-      const postgreSQLConfig = {
-        user: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        host: process.env.POSTGRES_HOST,
-        port: parseInt(process.env.POSTGRES_PORT),
-        database: process.env.POSTGRES_DATABASE,
-        ssl: {
-          rejectUnauthorized: true,
-          ca: process.env.POSTGRES_SSL.replace(/"""/g, ""),
-        },
-      };
 
       try {
         const { state, saveCreds, deleteSession } =

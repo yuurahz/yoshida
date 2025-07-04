@@ -17,6 +17,7 @@
 **YOSHIDA** is a powerful and versatile WhatsApp bot packed with multifunctional features, built using **[Baileys](https://github.com/Whiskeysockets/Baileys)** library for free!
 
 ### 🌟 Key Features
+
 - 🤖 **Interactive AI Integration** - Engaging and realistic conversation experience
 - 💾 **Dual Storage System** - PostgreSQL and Local storage options
 - 🔧 **Highly Customizable** - Tailor the bot to your needs
@@ -28,7 +29,8 @@
 ## 🚀 Quick Start
 
 ### 📋 Prerequisites
-- Node.js v16+ 
+
+- Node.js v16+
 - NPM or Yarn
 - WhatsApp Account
 
@@ -57,8 +59,7 @@ Create a `.env` file in your project root and configure the following:
 ```bash
 # 🌍 General Configuration
 TZ=Asia/Jakarta                 # Your timezone
-DATABASE_STATE=json          # Database type: json/mongo
-DATABASE_URL=your_mongodb_url   # MongoDB URL (optional)
+DATABASE_STATE=json          # Database type: json/postgres
 
 # 📱 WhatsApp Configuration
 PAIRING_STATE=true                 # Enable pairing mode
@@ -88,25 +89,28 @@ Create `ecosystem.config.js` for production deployment:
 
 ```javascript
 module.exports = {
-  apps: [{
-    name: "yoshida",
-    script: "./index.js",
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: "2G",
-    node_args: "--max-old-space-size=2048",
-    env: {
-      NODE_ENV: "production"
+  apps: [
+    {
+      name: "yoshida",
+      script: "./index.js",
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: "2G",
+      node_args: "--max-old-space-size=2048",
+      env: {
+        NODE_ENV: "production",
+      },
+      env_development: {
+        NODE_ENV: "development",
+      },
     },
-    env_development: {
-      NODE_ENV: "development"
-    }
-  }]
+  ],
 };
 ```
 
 **Start with PM2:**
+
 ```bash
 pm2 start ecosystem.config.js
 pm2 save
@@ -121,27 +125,27 @@ pm2 startup
 
 ```javascript
 module.exports = {
-   help: ['ping', 'test'],           // Command help display
-   tags: ['main'],                   // Plugin category
-   command: /^(ping|test)$/i,        // Command regex pattern
-   
-   run: async (m, { conn, Func }) => {
-      try {
-         // 🎉 Your awesome code here
-         m.reply('🏓 Pong! Bot is running smoothly!');
-      } catch (error) {
-         console.error(error);
-         return m.reply(Func.jsonFormat(error));
-      }
-   },
-   
-   // 🔒 Permission Settings
-   group: false,        // Group only command
-   admin: false,        // Admin only command  
-   limit: true,         // Use command limits
-   premium: false,      // Premium user only
-   botAdmin: false,     // Bot must be admin
-   owner: false         // Owner only command
+  help: ["ping", "test"], // Command help display
+  tags: ["main"], // Plugin category
+  command: /^(ping|test)$/i, // Command regex pattern
+
+  run: async (m, { conn, Func }) => {
+    try {
+      // 🎉 Your awesome code here
+      m.reply("🏓 Pong! Bot is running smoothly!");
+    } catch (error) {
+      console.error(error);
+      return m.reply(Func.jsonFormat(error));
+    }
+  },
+
+  // 🔒 Permission Settings
+  group: false, // Group only command
+  admin: false, // Admin only command
+  limit: true, // Use command limits
+  premium: false, // Premium user only
+  botAdmin: false, // Bot must be admin
+  owner: false, // Owner only command
 };
 ```
 
@@ -149,18 +153,18 @@ module.exports = {
 
 ```javascript
 module.exports = {
-   async before(m, { conn, Func, store }) {
-      try {
-         // 🎭 Pre-processing logic
-         if (m.text && m.text.includes('hello')) {
-            m.reply('👋 Hello there!');
-         }
-      } catch (error) {
-         console.error(error);
-         return m.reply(Func.jsonFormat(error));
+  async before(m, { conn, Func, store }) {
+    try {
+      // 🎭 Pre-processing logic
+      if (m.text && m.text.includes("hello")) {
+        m.reply("👋 Hello there!");
       }
-      return true; // Continue to next handler
-   }
+    } catch (error) {
+      console.error(error);
+      return m.reply(Func.jsonFormat(error));
+    }
+    return true; // Continue to next handler
+  },
 };
 ```
 
@@ -191,20 +195,20 @@ case "advanced": {
 
 ### 🌐 Recommended Hosting Platforms
 
-| Platform | Type | Recommendation |
-|----------|------|----------------|
-| [![Heroku](https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)](https://heroku.com/) | Cloud Platform | ⭐⭐⭐⭐⭐ |
-| [![DigitalOcean](https://img.shields.io/badge/DigitalOcean-0080FF?style=for-the-badge&logo=digitalocean&logoColor=white)](https://digitalocean.com/) | VPS/RDP | ⭐⭐⭐⭐⭐ |
-| [![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/) | Cloud Platform | ⭐⭐⭐⭐ |
-| [![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com/) | Cloud Platform | ⭐⭐⭐⭐ |
+| Platform                                                                                                                                             | Type           | Recommendation |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | -------------- |
+| [![Heroku](https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)](https://heroku.com/)                         | Cloud Platform | ⭐⭐⭐⭐⭐     |
+| [![DigitalOcean](https://img.shields.io/badge/DigitalOcean-0080FF?style=for-the-badge&logo=digitalocean&logoColor=white)](https://digitalocean.com/) | VPS/RDP        | ⭐⭐⭐⭐⭐     |
+| [![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/)                     | Cloud Platform | ⭐⭐⭐⭐       |
+| [![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com/)                         | Cloud Platform | ⭐⭐⭐⭐       |
 
 ### 🗄️ Database Options
 
-| Database | Use Case | Performance |
-|----------|----------|-------------|
-| [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com/) | Large Scale | ⭐⭐⭐⭐⭐ |
-| [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://console.aiven.io) | Session Storage | ⭐⭐⭐⭐⭐ |
-| ![JSON](https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white) | Development | ⭐⭐⭐ |
+| Database                                                                                                                                      | Use Case        | Performance |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ----------- |
+| [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com/)              | Large Scale     | ⭐⭐⭐⭐⭐  |
+| [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://console.aiven.io) | Session Storage | ⭐⭐⭐⭐⭐  |
+| ![JSON](https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white)                                               | Development     | ⭐⭐⭐      |
 
 ---
 
@@ -212,27 +216,30 @@ case "advanced": {
 
 For Heroku deployment, add these buildpacks:
 
-| Buildpack | Purpose | Link |
-|-----------|---------|------|
-| **FFMPEG** | Media Processing | [![Add Buildpack](https://img.shields.io/badge/Add-Buildpack-purple?style=for-the-badge)](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
-| **ImageMagick** | Image Processing | [![Add Buildpack](https://img.shields.io/badge/Add-Buildpack-purple?style=for-the-badge)](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
+| Buildpack       | Purpose          | Link                                                                                                                                                     |
+| --------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **FFMPEG**      | Media Processing | [![Add Buildpack](https://img.shields.io/badge/Add-Buildpack-purple?style=for-the-badge)](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
+| **ImageMagick** | Image Processing | [![Add Buildpack](https://img.shields.io/badge/Add-Buildpack-purple?style=for-the-badge)](https://github.com/DuckyTeam/heroku-buildpack-imagemagick)     |
 
 ---
 
 ## 📜 Terms & Conditions
 
 ### ✅ Allowed
+
 - ✨ Personal and educational use
 - 🔧 Modifications and improvements
 - 🌟 Contributions to the project
 
 ### ❌ Not Allowed
+
 - 💰 Commercial sale without significant modifications
 - 🏴‍☠️ Removing credits or license
 - 🚫 Malicious or harmful usage
 - 🤖 Creating fake or misleading copies
 
 ### 🙏 Please Remember
+
 - ⭐ Give this repository a star if you find it helpful
 - 🔗 Keep original credits intact
 - 🛡️ Use trusted hosting platforms
@@ -255,6 +262,7 @@ Need help or want to contribute? Join our community!
 ---
 
 ### 🌟 Special Thanks
+
 - All contributors and users who make this project better
 - The open-source community for inspiration and support
 - Beta testers who help improve stability

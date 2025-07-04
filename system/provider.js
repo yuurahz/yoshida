@@ -1,8 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const mongoose = require("mongoose");
+const { Pool } = require("pg");
 
-/* class json */
 class Local {
   data = {};
   file = path.join(process.cwd(), process.env.DATABASE_NAME + ".json");
@@ -15,12 +14,11 @@ class Local {
       fs.writeFileSync(this.file, JSON.stringify(this.data, null, 2));
       data = this.data;
     }
-
     return data;
   }
 
   write(data) {
-    this.data = data ? data : global.db;
+    this.data = data;
     let dirname = path.dirname(this.file);
     if (!fs.existsSync(dirname)) fs.mkdirSync(dirname, { recursive: true });
     fs.writeFileSync(this.file, JSON.stringify(this.data, null, 2));
@@ -28,77 +26,133 @@ class Local {
   }
 }
 
-/* class mongoose */
-class MongoDB {
-  constructor(url, tableName) {
-    this.url = url;
+class PostgreSQL {
+  constructor(config, tableName) {
+    this.config = config;
     this.tableName = tableName;
-    this.connection = null;
-    this.schema = new mongoose.Schema({
-      data: { type: mongoose.Schema.Types.Mixed, default: {} },
-    });
-    this.model = mongoose.model(this.tableName, this.schema);
+    this.pool = null;
+    this.isClosing = false;
   }
 
-  async connect() {
-    if (!this.connection) {
+  async connect(forceReconnect = false) {
+    if ((forceReconnect || !this.pool) && !this.isClosing) {
       try {
-        this.connection = await mongoose.connect(this.url, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        });
+        this.pool = new Pool(this.config);
+
+        const client = await this.pool.connect();
+        client.release();
+
+        await this.createTable();
       } catch (error) {
-        console.error("MongoDB connection error:", error);
+        console.error("PostgreSQL connection error:", error);
         throw error;
       }
     }
   }
 
-  async read() {
-    await this.connect();
+  async createTable() {
+    if (this.isClosing || !this.pool) return;
+
+    const query = `
+      CREATE TABLE IF NOT EXISTS ${this.tableName} (
+        id SERIAL PRIMARY KEY,
+        data JSONB DEFAULT '{}'::jsonb,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
     try {
-      const document = await this.model.findOne();
-      if (!document) {
-        const defaultData = new this.model({ data: {} });
-        await defaultData.save();
-        return defaultData.data;
-      }
-      return document.data;
+      await this.pool.query(query);
     } catch (error) {
-      console.error("Error reading data from MongoDB:", error);
+      console.error("Error creating table:", error);
+      throw error;
+    }
+  }
+
+  async read() {
+    if (this.isClosing) {
+      console.warn("Cannot read: PostgreSQL pool is closing");
+      return {};
+    }
+
+    if (!this.pool) await this.connect();
+
+    try {
+      const query = `SELECT data FROM ${this.tableName} ORDER BY id LIMIT 1`;
+      const result = await this.pool.query(query);
+
+      if (result.rows.length === 0) {
+        const insertQuery = `INSERT INTO ${this.tableName} (data) VALUES ($1) RETURNING data`;
+        const insertResult = await this.pool.query(insertQuery, [
+          JSON.stringify({}),
+        ]);
+        return insertResult.rows[0].data;
+      }
+
+      return result.rows[0].data;
+    } catch (error) {
+      if (error.message.includes("pool after calling end")) {
+        console.warn("Pool was closed, reconnecting...");
+        await this.connect(true);
+        return this.read();
+      }
+      console.error("Error reading data from PostgreSQL:", error);
       throw error;
     }
   }
 
   async write(data) {
-    await this.connect();
+    if (this.isClosing) {
+      console.warn("Cannot write: PostgreSQL pool is closing");
+      return;
+    }
+
+    if (!this.pool) await this.connect();
+
     try {
-      let document = await this.model.findOne();
-      if (document) {
-        document.data = data || {};
-        await document.save();
+      const jsonData = JSON.stringify(data || {});
+
+      const checkQuery = `SELECT id FROM ${this.tableName} ORDER BY id LIMIT 1`;
+      const checkResult = await this.pool.query(checkQuery);
+
+      if (checkResult.rows.length > 0) {
+        const updateQuery = `
+          UPDATE ${this.tableName} 
+          SET data = $1, updated_at = CURRENT_TIMESTAMP 
+          WHERE id = $2
+        `;
+        await this.pool.query(updateQuery, [jsonData, checkResult.rows[0].id]);
       } else {
-        document = new this.model({ data: data || {} });
-        await document.save();
+        const insertQuery = `INSERT INTO ${this.tableName} (data) VALUES ($1)`;
+        await this.pool.query(insertQuery, [jsonData]);
       }
     } catch (error) {
-      console.error("Error writing data to MongoDB:", error);
+      if (error.message.includes("pool after calling end")) {
+        console.warn("Pool was closed, reconnecting...");
+        await this.connect(true);
+        return this.write(data);
+      }
+      console.error("Error writing data to PostgreSQL:", error);
       throw error;
     }
   }
 
   async close() {
-    if (this.connection) {
+    if (this.pool && !this.isClosing) {
+      this.isClosing = true;
       try {
-        await mongoose.disconnect();
-        this.connection = null;
-        console.log("Disconnected from MongoDB");
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        await this.pool.end();
+        this.pool = null;
+        console.log("Disconnected from PostgreSQL");
       } catch (error) {
-        console.error("Error disconnecting from MongoDB:", error);
+        console.error("Error disconnecting from PostgreSQL:", error);
         throw error;
       }
     }
   }
 }
 
-module.exports = { Local, MongoDB };
+module.exports = { Local, PostgreSQL };

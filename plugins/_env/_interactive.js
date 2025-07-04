@@ -16,7 +16,7 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-const cleanExpiredSessions = (db) => {
+const cleanExpiredSessions = (sender) => {
   const now = Date.now();
   for (const sender in db.users) {
     if (
@@ -135,7 +135,7 @@ const processMediaContent = async (
   }
 };
 
-const getChatSession = (db, sender, geminiModel) => {
+const getChatSession = (sender, geminiModel) => {
   if (!db.users[sender]) {
     db.users[sender] = {};
   }
@@ -336,7 +336,7 @@ module.exports = {
         return true;
       }
 
-      await cleanExpiredSessions(db);
+      await cleanExpiredSessions(m.sender);
 
       let mime = (q.msg || q).mimetype || "";
       const geminiModel = genAI.getGenerativeModel({
@@ -348,7 +348,7 @@ module.exports = {
         tools: [{ functionDeclarations: commands }],
       });
 
-      let chatSession = getChatSession(db, m.sender, geminiModel);
+      let chatSession = getChatSession(m.sender, geminiModel);
 
       if (db.users[m.sender]?.activity) {
         db.users[m.sender].activity.geminiChatExpiry =

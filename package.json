@@ -30,7 +30,6 @@
     "awesome-phonenumber": "^2.64.0",
     "link-preview-js": "^3.0.12",
     "module-alias": "^2.2.3",
-    "mongoose": "^8.12.1",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.3",
     "node-webpmux": "^3.2.0",

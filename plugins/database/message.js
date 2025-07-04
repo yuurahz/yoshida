@@ -1,4 +1,4 @@
-const { proto } = require("baileys");
+const { proto } = require("@whiskeysockets/baileys");
 
 module.exports = {
   help: ["+msg", "-msg", "listmsg"],

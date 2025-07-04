@@ -2,9 +2,8 @@ const fs = require("fs");
 const { Color } = new (require("@yoshx/func"))();
 
 module.exports = async (conn, m) => {
- 
   const isCommand = (m.prefix && m.body.startsWith(m.prefix)) || false;
-  
+
   try {
     switch (isCommand ? m.command.toLowerCase() : false) {
       case "tes": {

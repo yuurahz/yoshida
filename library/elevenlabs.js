@@ -2,7 +2,7 @@ const LABSURL = "https://api.elevenlabs.io";
 const LABSKEY = process.env.ELEVENLABS_API_KEY,
   DEFAULT_MODEL = "eleven_multilingual_v2",
   DEFAULT_URL = "https://api.elevenlabs.io";
-  
+
 let apiURL = LABSURL ?? DEFAULT_URL,
   apiKey = LABSKEY;
 

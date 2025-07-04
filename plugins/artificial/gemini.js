@@ -16,7 +16,7 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-const cleanExpiredSessions = (db) => {
+const cleanExpiredSessions = (sender) => {
   const now = Date.now();
   for (const sender in db.users) {
     if (
@@ -135,7 +135,7 @@ const processMediaContent = async (
   }
 };
 
-const getChatSession = (db, sender, geminiModel) => {
+const getChatSession = (sender, geminiModel) => {
   if (!db.users[sender]) {
     db.users[sender] = {};
   }
@@ -328,7 +328,7 @@ module.exports = {
   command: /^(gemini|ai|resetaichat)$/i,
   run: async (m, { API, Func, quoted: q, conn }) => {
     try {
-      await cleanExpiredSessions(db);
+      await cleanExpiredSessions(m.sender);
 
       if (m.command === "resetaichat") {
         if (db.users[m.sender]?.activity?.geminiChat) {
@@ -360,7 +360,7 @@ module.exports = {
         tools: [{ functionDeclarations: commands }],
       });
 
-      let chatSession = getChatSession(db, m.sender, geminiModel);
+      let chatSession = getChatSession(m.sender, geminiModel);
 
       db.users[m.sender].activity.geminiChatExpiry =
         Date.now() + 60 * 60 * 1000;
