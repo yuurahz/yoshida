@@ -38,7 +38,6 @@ Free to use, flexible, and built on top of Yoshida‑APIs and @yoshx/func
 
 ```env
 TZ=<Your Time Zone>
-DATABASE_URL=<Your MongoDB connection URI>
 PAIRING_STATE=<true|false>
 PAIRING_NUMBER=<Phone number to connect/apply pairing>
 ````
@@ -180,4 +179,4 @@ module.exports = {
 Feel free to adjust or enrich any section to suit your style and future updates. Let me know if you want help writing plugin examples, API docs, or deployment scripts!
 — Based on current README and repository structure ([github.com][1])
 
-[1]: https://github.com/yuurahz/yoshida?utm_source=chatgpt.com "GitHub - yuurahz/yoshida: Lightweight Whatsapp Bot Using Baileys"
+[1]: https://github.com/yuurahz/yoshida "GitHub - yuurahz/yoshida: Lightweight Whatsapp Bot Using Baileys"
