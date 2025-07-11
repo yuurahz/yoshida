@@ -1,8 +1,7 @@
 const { Function: Func, Color } = new (require("@yoshx/func"))();
 const fs = require("fs");
 
-/* idk */
-global.upload = require("@library/uploader");
+/* footer */
 global.footer = Func.styles("© yoshida-bot");
 
 /* message */

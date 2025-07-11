@@ -56,12 +56,12 @@ module.exports = {
       .replace("+mode", setting.group_mode ? "Group only" : "Hybrid")
       .replace(
         "+db",
-        /mongo/.test(process.env.DATABASE_STATE)
-          ? "MongoDB"
+        /postgres/.test(process.env.DATABASE_STATE)
+          ? "PostgreSQL"
           : `Local : ${local_size}`,
       );
 
-    const legend = "📢 `Keterangan:`\nⓁ︎ = Limit\nⓅ = Premium";
+    const legend = "> `Keterangan:`\nⓁ︎ = Limit\nⓅ = Premium";
 
     const formatList = (items, prefix = "") => {
       const lines = items.split("\n");

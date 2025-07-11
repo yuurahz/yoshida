@@ -4,10 +4,10 @@ module.exports = {
   help: ["smeme"],
   tags: ["converter"],
   command: /^(smeme|stickermeme)$/i,
-  run: async (m, { conn, quoted, Func, setting }) => {
+  run: async (m, { conn, uploader, quoted, Func, setting }) => {
     try {
       if (!m.text)
-        return m.reply(Func.example(m.prefix, m.command, "Hi | Dude"));
+        return m.reply(Func.example(m.prefix, m.command, "hai | bro"));
       let [top, bottom] = m.text.split`|`;
       let mime = (quoted.msg || quoted).mimetype || "";
       if (!mime) return m.reply(Func.texted("bold", `Reply photo.`));
@@ -19,7 +19,7 @@ module.exports = {
           ),
         );
       let img = await quoted.download();
-      let link = await upload.tmpfiles(img);
+      let link = await uploader.providers.tmpfiles.upload(img);
       let meme = `https://api.memegen.link/images/custom/${encodeURIComponent(top ? top : " ")}/${encodeURIComponent(bottom ? bottom : "")}.png?background=${link}&font=impact`;
       await makeSticker(await Func.fetchBuffer(meme), {
         pack: setting.stick_pack,

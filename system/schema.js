@@ -1,18 +1,16 @@
 module.exports = (m) => {
   let isNumber = (x) => typeof x === "number" && !isNaN(x);
-  let user = db.users[m.sender];
-  if (typeof user !== "object") db.users[m.sender] = {};
+  let user = global.db.users[m.sender];
+  if (typeof user !== "object") global.db.users[m.sender] = {};
   if (user) {
     if (!isNumber(user.exp)) user.exp = 100;
     if (!isNumber(user.limit)) user.limit = process.env.LIMIT;
-    if (!isNumber(user.joinlimit)) user.joinlimit = 1;
     if (!isNumber(user.money)) user.money = 100;
     if (!isNumber(user.bank)) user.bank = 100;
     if (!isNumber(user.lastclaim)) user.lastclaim = 0;
     if (!("registered" in user)) user.registered = false;
     if (!user.registered) {
       if (!("name" in user)) user.name = "";
-      if (!isNumber(user.saldo)) user.saldo = 0;
       if (!isNumber(user.age)) user.age = 1;
       if (!isNumber(user.unreglast)) user.unreglast = 0;
       if (!isNumber(user.regis_time)) user.regis_time = -1;
@@ -23,8 +21,6 @@ module.exports = (m) => {
     if (!("banned" in user)) user.banned = false;
     if (!("premium" in user)) user.premium = false;
     if (!isNumber(user.expired)) user.expired = 0;
-    if (!isNumber(user.ban_time)) user.ban_time = 0;
-    if (!isNumber(user.ban_temporary)) user.ban_temporary = 0;
     if (!isNumber(user.warn)) user.warn = 0;
     if (!isNumber(user.level)) user.level = 0;
     if (!("role" in user)) user.role = "Newbie";
@@ -32,17 +28,15 @@ module.exports = (m) => {
     if (!isNumber(user.lastseen)) user.lastseen = 0;
     if (!("activity" in user)) user.activity = {};
   } else {
-    db.users[m.sender] = {
+    global.db.users[m.sender] = {
       exp: 100,
       limit: process.env.LIMIT,
-      joinlimit: 1,
       expired: 0,
       money: 100,
       bank: 100,
       lastclaim: 0,
       registered: false,
       name: "",
-      saldo: 0,
       age: 1,
       unreglast: 0,
       regis_time: -1,
@@ -61,8 +55,8 @@ module.exports = (m) => {
   }
 
   if (m.isGroup) {
-    let group = db.groups[m.chat];
-    if (typeof group !== "object") db.groups[m.chat] = {};
+    let group = global.db.groups[m.chat];
+    if (typeof group !== "object") global.db.groups[m.chat] = {};
     if (group) {
       if (!isNumber(group.activity)) group.activity = 0;
       if (!isNumber(group.expired)) group.expired = 0;
@@ -77,7 +71,7 @@ module.exports = (m) => {
       if (!("stay" in group)) group.stay = false;
       if (!("member" in group)) group.member = {};
     } else {
-      db.groups[m.chat] = {
+      global.db.groups[m.chat] = {
         activity: 0,
         expired: 0,
         sWelcome: "",
@@ -94,22 +88,22 @@ module.exports = (m) => {
     }
   }
 
-  let chat = db.chats[m.chat];
-  if (typeof chat !== "object") db.chats[m.chat] = {};
+  let chat = global.db.chats[m.chat];
+  if (typeof chat !== "object") global.db.chats[m.chat] = {};
   if (chat) {
     if (!isNumber(chat.chat)) chat.chat = 0;
     if (!isNumber(chat.lastchat)) chat.lastchat = 0;
     if (!isNumber(chat.command)) chat.command = 0;
   } else {
-    db.chats[m.chat] = {
+    global.db.chats[m.chat] = {
       chat: 0,
       lastchat: 0,
       command: 0,
     };
   }
 
-  let setting = db.setting;
-  if (typeof setting !== "object") db.setting = {};
+  let setting = global.db.setting;
+  if (typeof setting !== "object") global.db.setting = {};
   if (setting) {
     if (!isNumber(setting.style)) setting.style = 0;
     if (!isNumber(setting.lastreset)) setting.lastreset = new Date() * 1;
@@ -132,7 +126,7 @@ module.exports = (m) => {
       setting.msg =
         "Hi +tag. I am an automated system (WhatsApp Bot) that can help to do something, search and get data / information only through WhatsApp.\n\n◦ *Database* : +db\n◦ *Library* : Baileys\n\nIf you find an error or want to upgrade premium plan contact the owner.";
   } else {
-    db.setting = {
+    global.db.setting = {
       style: 0,
       lastreset: new Date() * 1,
       autoread: true,

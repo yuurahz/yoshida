@@ -1,6 +1,7 @@
 const fs = require("fs");
 const cron = require("node-cron");
 const API = require("@system/api");
+const uploader = require("@library/uploader");
 const { Function: Func, Plugins, Color } = new (require("@yoshx/func"))();
 const { plugins } = Plugins;
 
@@ -158,6 +159,7 @@ module.exports = async (conn, m, store) => {
             isOwner,
             isPrems,
             groupSet,
+            uploader,
           })
         )
           continue;
@@ -317,6 +319,7 @@ module.exports = async (conn, m, store) => {
           isOwner,
           isPrems,
           groupSet,
+          uploader,
         };
         try {
           await plugin.call(conn, m, extra);

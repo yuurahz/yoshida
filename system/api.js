@@ -9,7 +9,7 @@ const APIKeys = {
   "": "",
 };
 
-const API = (name, path = "/", query = {}, apikeyqueryname) =>
+module.exports = API = (name, path = "/", query = {}, apikeyqueryname) =>
   (name in APIs ? APIs[name] : name) +
   path +
   (query || apikeyqueryname
@@ -25,5 +25,3 @@ const API = (name, path = "/", query = {}, apikeyqueryname) =>
         }),
       )
     : "");
-
-module.exports = API;
