@@ -51,7 +51,7 @@
 ```
 📦 yoshida-bot/
 ├── 📁 library/           # Core logic & helper modules
-├── 📁 plugins/           # Command-based plugin modules  
+├── 📁 plugins/           # Command-based plugin modules
 ├── 📁 system/            # Internal system logic
 ├── 📁 sessions/          # WhatsApp session files (JSON)
 ├── 📁 database/          # Local database files (JSON)
@@ -68,14 +68,14 @@
 
 ### **System Requirements**
 
-| Component | Version | Required |
-|-----------|---------|----------|
-| Node.js | 16.x or higher | ✅ |
-| npm/yarn | Latest | ✅ |
-| Git | Latest | ✅ |
-| FFmpeg | Latest | ✅ |
-| ImageMagick | Latest | ✅ |
-| PostgreSQL | 12.x or higher | ⚠️ Optional |
+| Component   | Version        | Required    |
+| ----------- | -------------- | ----------- |
+| Node.js     | 16.x or higher | ✅          |
+| npm/yarn    | Latest         | ✅          |
+| Git         | Latest         | ✅          |
+| FFmpeg      | Latest         | ✅          |
+| ImageMagick | Latest         | ✅          |
+| PostgreSQL  | 12.x or higher | ⚠️ Optional |
 
 ---
 
@@ -104,7 +104,9 @@ heroku buildpacks:add https://github.com/DuckyTeam/heroku-buildpack-imagemagick.
   "buildpacks": [
     { "url": "heroku/nodejs" },
     { "url": "heroku/python" },
-    { "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git" },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    },
     { "url": "https://github.com/DuckyTeam/heroku-buildpack-imagemagick.git" }
   ]
 }
@@ -116,12 +118,12 @@ heroku buildpacks:add https://github.com/DuckyTeam/heroku-buildpack-imagemagick.
 
 **Download and install the following software:**
 
-| Software | Download Link | Purpose |
-|----------|---------------|---------|
-| **Git** | [Download here](https://git-scm.com/downloads) | Version control & cloning |
-| **Node.js** | [Download here](https://nodejs.org/en/download) | JavaScript runtime |
-| **FFmpeg** | [Download here](https://ffmpeg.org/download.html) | Media processing |
-| **ImageMagick** | [Download here](https://imagemagick.org/script/download.php) | Image processing |
+| Software        | Download Link                                                | Purpose                   |
+| --------------- | ------------------------------------------------------------ | ------------------------- |
+| **Git**         | [Download here](https://git-scm.com/downloads)               | Version control & cloning |
+| **Node.js**     | [Download here](https://nodejs.org/en/download)              | JavaScript runtime        |
+| **FFmpeg**      | [Download here](https://ffmpeg.org/download.html)            | Media processing          |
+| **ImageMagick** | [Download here](https://imagemagick.org/script/download.php) | Image processing          |
 
 **Installation Steps:**
 
@@ -151,6 +153,7 @@ heroku buildpacks:add https://github.com/DuckyTeam/heroku-buildpack-imagemagick.
 ### **🟠 For Linux/VPS Users**
 
 **Ubuntu/Debian:**
+
 ```bash
 # Update package list
 sudo apt update
@@ -166,6 +169,7 @@ convert -version
 ```
 
 **CentOS/RHEL:**
+
 ```bash
 # Install NodeJS
 curl -sL https://rpm.nodesource.com/setup_16.x | sudo bash -
@@ -249,31 +253,31 @@ pm2 start ecosystem.config.js
 ```javascript
 module.exports = {
   // Plugin metadata
-  help: ['ping', 'test'],
-  tags: ['tools'],
+  help: ["ping", "test"],
+  tags: ["tools"],
   command: /^(ping|test)$/i,
-  
+
   // Main plugin logic
   run: async (m, { conn }) => {
     try {
-      const startTime = Date.now()
-      await conn.reply(m.chat, '🏓 Pong!', m)
-      const endTime = Date.now()
-      
-      await conn.reply(m.chat, `⚡ Response time: ${endTime - startTime}ms`, m)
+      const startTime = Date.now();
+      await conn.reply(m.chat, "🏓 Pong!", m);
+      const endTime = Date.now();
+
+      await conn.reply(m.chat, `⚡ Response time: ${endTime - startTime}ms`, m);
     } catch (error) {
-      return conn.reply(m.chat, `❌ Error: ${error.message}`, m)
+      return conn.reply(m.chat, `❌ Error: ${error.message}`, m);
     }
   },
-  
+
   // Plugin permissions
-  group: false,     // Works in groups
-  admin: false,     // Requires admin
-  limit: false,     // Uses command limit
-  premium: false,   // Premium only
-  botAdmin: false,  // Bot needs admin
-  owner: false      // Owner only
-}
+  group: false, // Works in groups
+  admin: false, // Requires admin
+  limit: false, // Uses command limit
+  premium: false, // Premium only
+  botAdmin: false, // Bot needs admin
+  owner: false, // Owner only
+};
 ```
 
 ### **Creating Event Handlers**
@@ -283,15 +287,15 @@ module.exports = {
   async before(m, { conn }) {
     try {
       // Pre-processing logic
-      if (m.text && m.text.includes('hello')) {
-        await conn.reply(m.chat, '👋 Hello there!', m)
+      if (m.text && m.text.includes("hello")) {
+        await conn.reply(m.chat, "👋 Hello there!", m);
       }
     } catch (error) {
-      console.error('Event handler error:', error)
+      console.error("Event handler error:", error);
     }
-    return true
-  }
-}
+    return true;
+  },
+};
 ```
 
 ---
@@ -300,12 +304,12 @@ module.exports = {
 
 <div align="center">
 
-| Platform | Difficulty | Cost | Recommended |
-|----------|------------|------|-------------|
-| 🟢 **Heroku** | Easy | Free Tier | ✅ Best for beginners |
-| 🟡 **Railway** | Easy | Free Tier | ✅ Great alternative |
-| 🟠 **VPS/VDS** | Medium | $5-20/month | ⭐ Most flexible |
-| 🟡 **Replit** | Easy | Free Tier | ⚠️ Limited resources |
+| Platform       | Difficulty | Cost        | Recommended           |
+| -------------- | ---------- | ----------- | --------------------- |
+| 🟢 **Heroku**  | Easy       | Free Tier   | ✅ Best for beginners |
+| 🟡 **Railway** | Easy       | Free Tier   | ✅ Great alternative  |
+| 🟠 **VPS/VDS** | Medium     | $5-20/month | ⭐ Most flexible      |
+| 🟡 **Replit**  | Easy       | Free Tier   | ⚠️ Limited resources  |
 
 </div>
 
@@ -329,22 +333,24 @@ git push heroku main
 
 ```javascript
 module.exports = {
-  apps: [{
-    name: "yoshida-bot",
-    script: "./index.js",
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: "1G",
-    node_args: "--max-old-space-size=2048",
-    env: {
-      NODE_ENV: "production"
+  apps: [
+    {
+      name: "yoshida-bot",
+      script: "./index.js",
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: "1G",
+      node_args: "--max-old-space-size=2048",
+      env: {
+        NODE_ENV: "production",
+      },
+      env_development: {
+        NODE_ENV: "development",
+      },
     },
-    env_development: {
-      NODE_ENV: "development"
-    }
-  }]
-}
+  ],
+};
 ```
 
 ---
@@ -373,28 +379,28 @@ Yoshida-Bot uses a **hybrid storage system** for optimal performance and reliabi
 const sessionConfig = {
   // PostgreSQL for production
   database: {
-    type: 'postgresql',
+    type: "postgresql",
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
   },
-  
+
   // Local JSON for development/backup
   local: {
-    type: 'json',
-    path: './sessions/',
-    autoSave: true
-  }
-}
+    type: "json",
+    path: "./sessions/",
+    autoSave: true,
+  },
+};
 ```
 
 ### **Database Configuration**
 
 ```javascript
 // PostgreSQL connection example
-const { Pool } = require('pg')
+const { Pool } = require("pg");
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -402,30 +408,30 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASS,
   port: process.env.DB_PORT,
-  ssl: process.env.NODE_ENV === 'production'
-})
+  ssl: process.env.NODE_ENV === "production",
+});
 
 // Local JSON storage
-const fs = require('fs')
-const path = require('path')
+const fs = require("fs");
+const path = require("path");
 
 class LocalStorage {
-  constructor(basePath = './database/') {
-    this.basePath = basePath
-    this.ensureDir()
+  constructor(basePath = "./database/") {
+    this.basePath = basePath;
+    this.ensureDir();
   }
-  
+
   save(key, data) {
-    const filePath = path.join(this.basePath, `${key}.json`)
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+    const filePath = path.join(this.basePath, `${key}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   }
-  
+
   load(key) {
-    const filePath = path.join(this.basePath, `${key}.json`)
+    const filePath = path.join(this.basePath, `${key}.json`);
     if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath, 'utf8'))
+      return JSON.parse(fs.readFileSync(filePath, "utf8"));
     }
-    return null
+    return null;
   }
 }
 ```
@@ -468,11 +474,11 @@ We welcome contributions! Here's how you can help:
 
 <div align="center">
 
-| Role | Contributor | Links |
-|------|-------------|-------|
-| 👨‍💻 **Lead Developer** | yuurahz | [GitHub](https://github.com/yuurahz) |
-| 📚 **Library Provider** | @yoshx/func | [npm](https://www.npmjs.com/package/@yoshx/func) |
-| 🌐 **API Provider** | Yoshida-APIs | [Documentation](https://api.yoshida.my.id) |
+| Role                    | Contributor  | Links                                            |
+| ----------------------- | ------------ | ------------------------------------------------ |
+| 👨‍💻 **Lead Developer**   | yuurahz      | [GitHub](https://github.com/yuurahz)             |
+| 📚 **Library Provider** | @yoshx/func  | [npm](https://www.npmjs.com/package/@yoshx/func) |
+| 🌐 **API Provider**     | Yoshida-APIs | [Documentation](https://api.yoshida.my.id)       |
 
 </div>
 
@@ -507,6 +513,6 @@ We welcome contributions! Here's how you can help:
 
 **Made with ❤️ by the Yoshida-Bot Team**
 
-*Building the future of WhatsApp automation*
+_Building the future of WhatsApp automation_
 
 </div>

@@ -3,19 +3,22 @@ const { makeSticker } = require("@library/sticker");
 module.exports = {
   help: ["brat"],
   tags: ["maker"],
-  command: /^(brat|stext|stickertext)$/i,
-  run: async (m, { Func, quoted, setting }) => {
+  command: /^(brat|stext|stickertext|bratvid)$/i,
+  run: async (m, { API, Func, setting, quoted }) => {
     try {
       if (!quoted.text)
         return m.reply(
-          `*~ Example:* ${m.prefix + m.command} halo\n\n*options:*\n*${m.prefix + m.command} <text> -animate*\n> create a ${m.command} with animation text`,
+          `*~ Example:* ${m.prefix + m.command} *text*\n\n*options:*\n*${m.prefix + m.command} text*\n> create a ${m.command} with text (no animated)\n*${m.prefix + m.command} text -animate*\n> create a ${m.command} with animated text`,
         );
       m.react("⏱️");
-      if (quoted.text.endsWith("-animate")) {
-        let make = quoted.text.split("-animate")[0].trim();
+      const isCmd = m.command === "bratvid";
+      if (isCmd || quoted.text.endsWith("-animate")) {
+        const make = isCmd
+          ? quoted.text
+          : quoted.text.split("-animate")[0].trim();
         await makeSticker(
           await Func.fetchBuffer(
-            `https://fastrestapis.fasturl.cloud/maker/brat/animated?text=${encodeURIComponent(make)}&mode=animate`,
+            API("yosh", "/maker/brat", { text: make, type: "animate" }),
           ),
           {
             pack: setting.stick_pack,
@@ -27,7 +30,7 @@ module.exports = {
       } else if (quoted.text) {
         await makeSticker(
           await Func.fetchBuffer(
-            `https://brat.caliphdev.com/api/brat?text=${encodeURIComponent(quoted.text)}`,
+            API("yosh", "/maker/brat", { text: quoted.text }),
           ),
           {
             pack: setting.stick_pack,
@@ -38,7 +41,8 @@ module.exports = {
         });
       }
     } catch (e) {
-      return m.reply(e.toString());
+      console.log(e);
+      return m.reply(mess.wrong);
     }
   },
   limit: 1,

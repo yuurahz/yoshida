@@ -155,11 +155,11 @@ function Client({ conn, store }) {
           ext: ".txt",
         };
         if (data && returnAsFilename && !filename)
-          (filename = path.join(
+          ((filename = path.join(
             __dirname,
             "../tmp/" + new Date() * 1 + type.ext,
           )),
-            await fs.writeFileSync(filename, data);
+            await fs.writeFileSync(filename, data));
         return {
           res,
           filename,
@@ -221,11 +221,11 @@ function Client({ conn, store }) {
           mtype = "image";
         else if (/video/.test(type.mime)) mtype = "video";
         else if (/audio/.test(type.mime))
-          (convert = await (ptt ? toPTT : toAudio)(file, type.ext)),
+          ((convert = await (ptt ? toPTT : toAudio)(file, type.ext)),
             (file = convert.data),
             (pathFile = convert.filename),
             (mtype = "audio"),
-            (mimetype = "audio/ogg codecs=opus");
+            (mimetype = "audio/ogg codecs=opus"));
         else mtype = "document";
         if (options.asDocument) mtype = "document";
         delete options.asSticker;

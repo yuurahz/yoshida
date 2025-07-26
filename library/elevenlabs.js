@@ -73,7 +73,7 @@ async function isValidVoice(voiceId) {
     const response = await apiCall("GET", `/v1/voices/${voiceId}`);
     return (await response.json()).voice_id === voiceId;
   } catch (e) {
-    return console.log("isValidVoice: " + e.message), !1;
+    return (console.log("isValidVoice: " + e.message), !1);
   }
 }
 
