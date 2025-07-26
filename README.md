@@ -220,7 +220,7 @@ DATABASE_STATE=
 SESSION_NAME=
 SESSION_TYPE= /** local or postgres (default local) */
 
-#postgresql config (visit here: https://console.aiven.io)
+#postgresql config (visit here: https://console.aiven.io)[recommended]
 POSTGRES_HOST=
 POSTGRES_PASSWORD=
 POSTGRES_USER=
@@ -376,15 +376,16 @@ Yoshida-Bot uses a **hybrid storage system** for optimal performance and reliabi
 
 ```javascript
 // Multiple session storage options
-const sessionConfig = {
-  // PostgreSQL for production
-  database: {
-    type: "postgresql",
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
+const postgreSQLConfig = {
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    host: process.env.POSTGRES_HOST,
+    port: parseInt(process.env.POSTGRES_PORT),
+    database: process.env.POSTGRES_DATABASE,
+    ssl: {
+      rejectUnauthorized: true,
+      ca: process.env.POSTGRES_SSL.replace(/"""/g, ""),
+    },
   },
 
   // Local JSON for development/backup
@@ -403,19 +404,22 @@ const sessionConfig = {
 const { Pool } = require("pg");
 
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASS,
-  port: process.env.DB_PORT,
-  ssl: process.env.NODE_ENV === "production",
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DATABASE,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT,
+  ssl: {
+    rejectUnauthorized: true,
+    ca: process.env.POSTGRES_SSL.replace(/"""/g, ""),
+  },
 });
 
 // Local JSON storage
 const fs = require("fs");
 const path = require("path");
 
-class LocalStorage {
+class Local {
   constructor(basePath = "./database/") {
     this.basePath = basePath;
     this.ensureDir();
