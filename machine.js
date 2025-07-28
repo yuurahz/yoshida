@@ -36,7 +36,7 @@
   /** database options */
   const mydb = /json/i.test(process.env.DATABASE_STATE)
     ? new Local()
-    : /mongo/i.test(process.env.DATABASE_STATE)
+    : /postgres/i.test(process.env.DATABASE_STATE)
       ? new PostgreSQL(postgreSQLConfig, "db_bot")
       : process.exit();
 
