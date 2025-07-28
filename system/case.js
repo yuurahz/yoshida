@@ -1,5 +1,6 @@
 const fs = require("fs");
-const { Color } = new (require("@yoshx/func"))();
+const Component = require("@yoshx/func").default;
+const { Color } = new Component();
 
 module.exports = async (conn, m) => {
   const isCommand = (m.prefix && m.body.startsWith(m.prefix)) || false;

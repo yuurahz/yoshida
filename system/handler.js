@@ -2,7 +2,8 @@ const fs = require("fs");
 const cron = require("node-cron");
 const API = require("@system/api");
 const uploader = require("@library/uploader");
-const { Function: Func, Plugins, Color } = new (require("@yoshx/func"))();
+const Component = require("@yoshx/func").default;
+const { Function: Func, Plugins, Color } = new Component();
 const { plugins } = Plugins;
 
 module.exports = async (conn, m, store) => {

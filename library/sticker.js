@@ -2,7 +2,8 @@ const fs = require("fs");
 const axios = require("axios");
 const { fromBuffer } = require("file-type");
 const Image = require("node-webpmux").Image;
-const { Function: Func } = new (require("@yoshx/func"))();
+const Component = require("@yoshx/func").default;
+const { Function: Func } = new Component();
 
 /* by hardianto */
 const setting = {

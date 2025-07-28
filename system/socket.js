@@ -12,7 +12,8 @@ const {
   proto,
 } = require("@whiskeysockets/baileys");
 const PhoneNumber = require("awesome-phonenumber");
-const { Function: Func } = new (require("@yoshx/func"))();
+const Component = require("@yoshx/func").default;
+const { Function: Func } = new Component();
 const { toAudio, toPTT } = require("@library/converter");
 const { fromBuffer } = require("file-type");
 const path = require("path");

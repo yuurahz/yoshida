@@ -11,12 +11,8 @@
   const { Client, serialize } = require("@system/socket");
   const { Local, PostgreSQL } = require("@system/provider");
   const { usePostgreSQLAuthState } = require("postgres-baileys");
-  const {
-    Color,
-    Libs,
-    Plugins,
-    Function: Func,
-  } = new (require("@yoshx/func"))();
+  const Component = require("@yoshx/func").default;
+  const { Color, Libs, Plugins, Function: Func } = new Component();
   const { loadPlugins, watchPlugins } = Plugins;
   const { loadLibs, watchLibs } = Libs;
 

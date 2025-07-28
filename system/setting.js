@@ -1,4 +1,5 @@
-const { Function: Func, Color } = new (require("@yoshx/func"))();
+const Component = require("@yoshx/func").default;
+const { Function: Func, Color } = new Component();
 const fs = require("fs");
 
 /* footer */
