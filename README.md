@@ -9,7 +9,7 @@
 </div>
 
 <div align="center">
-  <h3>🚀 Lightweight & Powerful WhatsApp Bot</h3>
+  <h3>Lightweight & Powerful WhatsApp Bot</h3>
   <p><em>Built with Baileys • Powered by Yoshida-APIs • Completely Free</em></p>
 </div>
 
@@ -23,7 +23,7 @@
 <td>No hidden costs, completely open-source</td>
 </tr>
 <tr>
-<td>🔌 <strong>Plugin-Ready</strong></td>
+<td>🔌 <strong>Plug & Play</strong></td>
 <td>Modular architecture for easy customization</td>
 </tr>
 <tr>
@@ -159,7 +159,7 @@ heroku buildpacks:add https://github.com/DuckyTeam/heroku-buildpack-imagemagick.
 sudo apt update
 
 # Install required packages
-sudo apt install -y git nodejs npm ffmpeg imagemagick postgresql postgresql-contrib
+sudo apt install -y git nodejs npm ffmpeg imagemagick
 
 # Verify installations
 node --version
@@ -176,7 +176,7 @@ curl -sL https://rpm.nodesource.com/setup_16.x | sudo bash -
 sudo yum install -y nodejs
 
 # Install other packages
-sudo yum install -y git ffmpeg ImageMagick postgresql postgresql-server
+sudo yum install -y git ffmpeg ImageMagick
 
 # Verify installations
 node --version
@@ -300,35 +300,6 @@ module.exports = {
 
 ---
 
-## 🌐 **Deployment Options**
-
-<div align="center">
-
-| Platform       | Difficulty | Cost        | Recommended           |
-| -------------- | ---------- | ----------- | --------------------- |
-| 🟢 **Heroku**  | Easy       | Free Tier   | ✅ Best for beginners |
-| 🟡 **Railway** | Easy       | Free Tier   | ✅ Great alternative  |
-| 🟠 **VPS/VDS** | Medium     | $5-20/month | ⭐ Most flexible      |
-| 🟡 **Replit**  | Easy       | Free Tier   | ⚠️ Limited resources  |
-
-</div>
-
-### **Heroku Deployment**
-
-```bash
-# Install Heroku CLI
-npm install -g heroku
-
-# Login to Heroku
-heroku login
-
-# Create new app
-heroku create your-bot-name
-
-# Deploy
-git push heroku main
-```
-
 ### **PM2 Configuration**
 
 ```javascript
@@ -388,13 +359,7 @@ const postgreSQLConfig = {
     },
   },
 
-  // Local JSON for development/backup
-  local: {
-    type: "json",
-    path: "./sessions/",
-    autoSave: true,
-  },
-};
+  // Local JSON
 ```
 
 ### **Database Configuration**
@@ -416,27 +381,90 @@ const pool = new Pool({
 });
 
 // Local JSON storage
-const fs = require("fs");
-const path = require("path");
-
 class Local {
-  constructor(basePath = "./database/") {
-    this.basePath = basePath;
-    this.ensureDir();
+  /**
+   * Initializes the LocalDB instance with the provided file path.
+   * @param {string} [filePath] - The path to the JSON file where the database will be stored. Defaults to 'database.json'.
+   */
+  constructor(filePath) {
+    this.filePath = filePath ? filePath + ".json" : process.env.DATABASE_NAME;
+    this.queue = [];
+    this.initDB();
   }
 
-  save(key, data) {
-    const filePath = path.join(this.basePath, `${key}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-  }
-
-  load(key) {
-    const filePath = path.join(this.basePath, `${key}.json`);
-    if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  /**
+   * Initializes the database by checking if the file exists.
+   * If the file does not exist, it creates an empty JSON file.
+   * @returns {Promise<void>}
+   */
+  initDB = async () => {
+    try {
+      await fs.access(this.filePath);
+    } catch (err) {
+      await this.write({});
     }
-    return null;
-  }
+  };
+
+  /**
+   * Validates if the provided data is a valid JSON object.
+   * @param {any} data - The data to be validated.
+   * @returns {boolean} - Returns true if the data is valid JSON, otherwise false.
+   */
+  validateJSON = (data) => {
+    try {
+      JSON.stringify(data, null);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  /**
+   * Adds data to the internal queue to be saved later.
+   * @param {object} data - The data to be added to the queue.
+   */
+  enqueue = (data) => this.queue.push(data);
+
+  /**
+   * Write the valid data from the queue to the file.
+   * If the data is valid JSON, it will be written to the file.
+   * @param {object} data - The data to be saved to the file.
+   * @returns {Promise<void>}
+   */
+  write = async (data) => {
+    this.enqueue(data);
+
+    const validData = this.queue.filter(this.validateJSON);
+    this.queue = [];
+
+    if (validData.length > 0) {
+      try {
+        await fs.writeFile(
+          this.filePath,
+          JSON.stringify(validData[0], null),
+          "utf8",
+        );
+      } catch (err) {
+        console.log(`Failed to save data: ${err.message}`);
+      }
+    } else {
+      console.log("No valid data to save");
+    }
+  };
+
+  /**
+   * Read the data from the JSON file and returns it.
+   * @returns {Promise<object|null>} - The parsed data from the file, or null if an error occurred.
+   */
+  read = async () => {
+    try {
+      const data = await fs.readFile(this.filePath, "utf8");
+      return JSON.parse(data);
+    } catch (err) {
+      console.log(`Failed to fetch data: ${err.message}`);
+      return null;
+    }
+  };
 }
 ```
 
@@ -478,11 +506,11 @@ We welcome contributions! Here's how you can help:
 
 <div align="center">
 
-| Role                    | Contributor  | Links                                            |
-| ----------------------- | ------------ | ------------------------------------------------ |
-| 👨‍💻 **Lead Developer**   | yuurahz      | [GitHub](https://github.com/yuurahz)             |
-| 📚 **Library Provider** | @yoshx/func  | [npm](https://www.npmjs.com/package/@yoshx/func) |
-| 🌐 **API Provider**     | Yoshida-APIs | [Documentation](https://api.yoshida.my.id)       |
+| Role                 | Contributor  | Links                                            |
+| -------------------- | ------------ | ------------------------------------------------ |
+| **Developer**        | yuurahz      | [GitHub](https://github.com/yuurahz)             |
+| **Library Provider** | @yoshx/func  | [npm](https://www.npmjs.com/package/@yoshx/func) |
+| **API Provider**     | Yoshida-APIs | [Try it](https://api.yoshida.my.id)              |
 
 </div>
 
@@ -499,19 +527,6 @@ We welcome contributions! Here's how you can help:
 **Need help?** Open an issue or join our community discussions!
 
 </div>
-
----
-
-## 🔮 **Roadmap**
-
-- [ ] 🎨 Web-based dashboard
-- [ ] 📱 Mobile app companion
-- [ ] 🔌 Plugin marketplace
-- [ ] 🌍 Multi-language support
-- [ ] 🤖 AI integration
-- [ ] 📊 Analytics dashboard
-
----
 
 <div align="center">
 
