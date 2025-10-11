@@ -2,46 +2,45 @@ const fs = require("fs");
 const axios = require("axios");
 const { fromBuffer } = require("file-type");
 const Image = require("node-webpmux").Image;
-const Component = require("@yoshx/func").default;
-const { Function: Func } = new Component();
+const Func = require("@system/functions");
 
 /* by hardianto */
 const setting = {
-  sessionInfo: {
-    WA_VERSION: "2.2106.5",
-    PAGE_UA:
-      "WhatsApp/2.2037.6 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36",
-    WA_AUTOMATE_VERSION: "3.6.10 UPDATE AVAILABLE: 3.6.11",
-    BROWSER_VERSION: "HeadlessChrome/88.0.4324.190",
-    OS: "Windows Server 2016",
-    START_TS: 1614310326309,
-    NUM: "6247",
-    LAUNCH_TIME_MS: 7934,
-    PHONE_VERSION: "2.20.205.16",
-  },
-  config: {
-    sessionId: "session",
-    headless: true,
-    qrTimeout: 20,
-    authTimeout: 0,
-    cacheEnabled: false,
-    useChrome: true,
-    killProcessOnBrowserClose: true,
-    throwErrorOnTosBlock: false,
-    chromiumArgs: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--aggressive-cache-discard",
-      "--disable-cache",
-      "--disable-application-cache",
-      "--disable-offline-load-stale-cache",
-      "--disk-cache-size=0",
-    ],
-    executablePath:
-      "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-    skipBrokenMethodsCheck: true,
-    stickerServerEndpoint: true,
-  },
+	sessionInfo: {
+		WA_VERSION: "2.2106.5",
+		PAGE_UA:
+			"WhatsApp/2.2037.6 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36",
+		WA_AUTOMATE_VERSION: "3.6.10 UPDATE AVAILABLE: 3.6.11",
+		BROWSER_VERSION: "HeadlessChrome/88.0.4324.190",
+		OS: "Windows Server 2016",
+		START_TS: 1614310326309,
+		NUM: "6247",
+		LAUNCH_TIME_MS: 7934,
+		PHONE_VERSION: "2.20.205.16",
+	},
+	config: {
+		sessionId: "session",
+		headless: true,
+		qrTimeout: 20,
+		authTimeout: 0,
+		cacheEnabled: false,
+		useChrome: true,
+		killProcessOnBrowserClose: true,
+		throwErrorOnTosBlock: false,
+		chromiumArgs: [
+			"--no-sandbox",
+			"--disable-setuid-sandbox",
+			"--aggressive-cache-discard",
+			"--disable-cache",
+			"--disable-application-cache",
+			"--disable-offline-load-stale-cache",
+			"--disk-cache-size=0",
+		],
+		executablePath:
+			"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+		skipBrokenMethodsCheck: true,
+		stickerServerEndpoint: true,
+	},
 };
 
 /**
@@ -50,23 +49,23 @@ const setting = {
  * @returns {Buffer} - The buffer of the media.
  */
 exports.toBuffer = async (PATH) => {
-  if (!PATH)
-    return { buffer: Buffer.alloc(0), ext: "png", mimetype: "image/png" };
-  const buffer = Buffer.isBuffer(PATH)
-    ? PATH
-    : /^data:.*?\/.*?;base64,/i.test(PATH)
-      ? Buffer.from(PATH.split(`,`)[1], "base64")
-      : /^https?:\/\//.test(PATH)
-        ? await Func.fetchBuffer(PATH)
-        : fs.existsSync(PATH)
-          ? fs.readFileSync(PATH)
-          : Buffer.alloc(0);
-  if (!Buffer.isBuffer(buffer)) throw new Error("Result is not a buffer");
-  const file = await fromBuffer(buffer);
-  const fixbuffer =
-    buffer instanceof ArrayBuffer ? Buffer.from(buffer) : buffer;
-  if (!file) throw new Error("Invalid file type");
-  return { buffer: fixbuffer, mime: file.mime, ext: file.ext };
+	if (!PATH)
+		return { buffer: Buffer.alloc(0), ext: "png", mimetype: "image/png" };
+	const buffer = Buffer.isBuffer(PATH)
+		? PATH
+		: /^data:.*?\/.*?;base64,/i.test(PATH)
+			? Buffer.from(PATH.split(`,`)[1], "base64")
+			: /^https?:\/\//.test(PATH)
+				? await Func.fetchBuffer(PATH)
+				: fs.existsSync(PATH)
+					? fs.readFileSync(PATH)
+					: Buffer.alloc(0);
+	if (!Buffer.isBuffer(buffer)) throw new Error("Result is not a buffer");
+	const file = await fromBuffer(buffer);
+	const fixbuffer =
+		buffer instanceof ArrayBuffer ? Buffer.from(buffer) : buffer;
+	if (!file) throw new Error("Invalid file type");
+	return { buffer: fixbuffer, mime: file.mime, ext: file.ext };
 };
 
 /**
@@ -78,39 +77,40 @@ exports.toBuffer = async (PATH) => {
  * @returns {Promise<Buffer>} - The buffer of the webp sticker with EXIF data.
  */
 exports.setExif = async (webpSticker, packname, author, extra = {}) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const img = new Image();
-      const stickerPackId = Func.randomBytes(5).toString("hex");
-      const json = {
-        "sticker-pack-id": `${"yoshida-" + stickerPackId}`,
-        "sticker-pack-name": packname,
-        "sticker-pack-publisher": author,
-        "sticker-pack-version": `${require("../package.json").version}`,
-        "android-app-store-link":
-          "https://play.google.com/store/apps/details?id=com.whatsapp",
-        "ios-app-store-link":
-          "https://apps.apple.com/us/app/whatsapp-messenger/",
-        "bot-official-site": "https://yoshida.my.id",
-        "sticker-pack-description":
-          "This sticker is a sticker that has been generated by YOSHIDA.BOT",
-        emojis: ["🤩", "🌟", "🥶", "💀", "😋", "😂", "😜", "❤️"],
-        ...extra,
-      };
-      let exifAttr = Buffer.from([
-        0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x41, 0x57,
-        0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00,
-      ]);
-      let jsonBuffer = Buffer.from(JSON.stringify(json), "utf8");
-      let exif = Buffer.concat([exifAttr, jsonBuffer]);
-      exif.writeUIntLE(jsonBuffer.length, 14, 4);
-      await img.load(webpSticker);
-      img.exif = exif;
-      resolve(await img.save(null));
-    } catch (e) {
-      reject(e);
-    }
-  });
+	return new Promise(async (resolve, reject) => {
+		try {
+			const img = new Image();
+			const stickerPackId = Func.randomBytes(5).toString("hex");
+			const json = {
+				"sticker-pack-id": `${"yoshida-" + stickerPackId}`,
+				"sticker-pack-name": packname,
+				"sticker-pack-publisher": author,
+				"sticker-pack-version": `${require("../package.json").version}`,
+				"android-app-store-link":
+					"https://play.google.com/store/apps/details?id=com.whatsapp",
+				"ios-app-store-link":
+					"https://apps.apple.com/us/app/whatsapp-messenger/",
+				"bot-official-site": "https://yoshida.my.id",
+				"sticker-pack-description":
+					"This sticker is a sticker that has been generated by YOSHIDA.BOT",
+				emojis: ["🤩", "🌟", "🥶", "💀", "😋", "😂", "😜", "❤️"],
+				...extra,
+			};
+			let exifAttr = Buffer.from([
+				0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00,
+				0x41, 0x57, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, 0x00,
+				0x00, 0x00,
+			]);
+			let jsonBuffer = Buffer.from(JSON.stringify(json), "utf8");
+			let exif = Buffer.concat([exifAttr, jsonBuffer]);
+			exif.writeUIntLE(jsonBuffer.length, 14, 4);
+			await img.load(webpSticker);
+			img.exif = exif;
+			resolve(await img.save(null));
+		} catch (e) {
+			reject(e);
+		}
+	});
 };
 
 /**
@@ -120,74 +120,76 @@ exports.setExif = async (webpSticker, packname, author, extra = {}) => {
  * @returns {Promise<Buffer>} - The buffer of the created sticker.
  */
 exports.makeSticker = async (
-  file,
-  data = {
-    pack: "",
-    author: "",
-    keepScale: true,
-    removebg: "HQ",
-    circle: false,
-  },
+	file,
+	data = {
+		pack: "",
+		author: "",
+		keepScale: true,
+		removebg: "HQ",
+		circle: false,
+	}
 ) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const buffer = await this.toBuffer(file);
-      if (buffer.mime === "image/webp") {
-        resolve(await this.setExif(buffer.buffer, data.pack, data.author));
-        return;
-      }
+	return new Promise(async (resolve, reject) => {
+		try {
+			const buffer = await this.toBuffer(file);
+			if (buffer.mime === "image/webp") {
+				resolve(
+					await this.setExif(buffer.buffer, data.pack, data.author)
+				);
+				return;
+			}
 
-      const config2 = {
-        ...data,
-        processOptions: {
-          crop: !data.keepScale,
-          fps: 60,
-          startTime: "00:00:00.0",
-          endTime: "00:00:7.0",
-          loop: 0,
-        },
-      };
+			const config2 = {
+				...data,
+				processOptions: {
+					crop: !data.keepScale,
+					fps: 60,
+					startTime: "00:00:00.0",
+					endTime: "00:00:7.0",
+					loop: 0,
+				},
+			};
 
-      const DEFAULT_URL = "https://sticker-api.openwa.dev/";
-      const Type = buffer.mime.includes("image") ? "image" : "file";
-      const url = `${DEFAULT_URL}${Type === "image" ? "prepareWebp" : "convertMp4BufferToWebpDataUrl"}`;
+			const DEFAULT_URL = "https://sticker-api.openwa.dev/";
+			const Type = buffer.mime.includes("image") ? "image" : "file";
+			const url = `${DEFAULT_URL}${Type === "image" ? "prepareWebp" : "convertMp4BufferToWebpDataUrl"}`;
 
-      const { data: responseData } = await axios.post(
-        url,
-        JSON.stringify({
-          ...setting,
-          stickerMetadata: config2,
-          [Type]: `data:${buffer.mime};base64,${buffer.buffer.toString("base64")}`,
-        }),
-        {
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json;charset=utf-8",
-            "User-Agent":
-              "WhatsApp/2.2037.6 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36",
-          },
-          maxBodyLength: Infinity,
-          maxContentLength: Infinity,
-        },
-      );
+			const { data: responseData } = await axios.post(
+				url,
+				JSON.stringify({
+					...setting,
+					stickerMetadata: config2,
+					[Type]: `data:${buffer.mime};base64,${buffer.buffer.toString("base64")}`,
+				}),
+				{
+					headers: {
+						Accept: "application/json, text/plain, */*",
+						"Content-Type": "application/json;charset=utf-8",
+						"User-Agent":
+							"WhatsApp/2.2037.6 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36",
+					},
+					maxBodyLength: Infinity,
+					maxContentLength: Infinity,
+				}
+			);
 
-      if (Type === "image") {
-        resolve(
-          await this.setExif(
-            Buffer.from(responseData.webpBase64, "base64"),
-            data.pack,
-            data.author,
-          ),
-        );
-      } else {
-        const webpBase = responseData
-          .replace(/^data:(.*?);base64,/, "")
-          .replace(/ /g, "+");
-        const fileBuffer = Buffer.from(webpBase, "base64");
-        resolve(await this.setExif(fileBuffer, data.pack, data.author));
-      }
-    } catch (error) {
-      reject(error);
-    }
-  });
+			if (Type === "image") {
+				resolve(
+					await this.setExif(
+						Buffer.from(responseData.webpBase64, "base64"),
+						data.pack,
+						data.author
+					)
+				);
+			} else {
+				const webpBase = responseData
+					.replace(/^data:(.*?);base64,/, "")
+					.replace(/ /g, "+");
+				const fileBuffer = Buffer.from(webpBase, "base64");
+				resolve(await this.setExif(fileBuffer, data.pack, data.author));
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
 };

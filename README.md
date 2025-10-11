@@ -101,14 +101,16 @@ heroku buildpacks:add https://github.com/DuckyTeam/heroku-buildpack-imagemagick.
 
 ```json
 {
-  "buildpacks": [
-    { "url": "heroku/nodejs" },
-    { "url": "heroku/python" },
-    {
-      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
-    },
-    { "url": "https://github.com/DuckyTeam/heroku-buildpack-imagemagick.git" }
-  ]
+	"buildpacks": [
+		{ "url": "heroku/nodejs" },
+		{ "url": "heroku/python" },
+		{
+			"url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+		},
+		{
+			"url": "https://github.com/DuckyTeam/heroku-buildpack-imagemagick.git"
+		}
+	]
 }
 ```
 
@@ -128,25 +130,25 @@ heroku buildpacks:add https://github.com/DuckyTeam/heroku-buildpack-imagemagick.
 **Installation Steps:**
 
 1. **Install Git**
-   - Download Git from the official website
-   - Run the installer with default settings
-   - Verify: `git --version`
+    - Download Git from the official website
+    - Run the installer with default settings
+    - Verify: `git --version`
 
 2. **Install Node.js**
-   - Download LTS version from nodejs.org
-   - Run the installer (includes npm)
-   - Verify: `node --version` and `npm --version`
+    - Download LTS version from nodejs.org
+    - Run the installer (includes npm)
+    - Verify: `node --version` and `npm --version`
 
 3. **Install FFmpeg**
-   - Download the Windows build
-   - Extract to `C:\ffmpeg\`
-   - Add `C:\ffmpeg\bin` to your system PATH
-   - Verify: `ffmpeg -version`
+    - Download the Windows build
+    - Extract to `C:\ffmpeg\`
+    - Add `C:\ffmpeg\bin` to your system PATH
+    - Verify: `ffmpeg -version`
 
 4. **Install ImageMagick**
-   - Download Windows installer
-   - Run with default settings
-   - Verify: `magick -version`
+    - Download Windows installer
+    - Run with default settings
+    - Verify: `magick -version`
 
 ---
 
@@ -252,31 +254,35 @@ pm2 start ecosystem.config.js
 
 ```javascript
 module.exports = {
-  // Plugin metadata
-  help: ["ping", "test"],
-  tags: ["tools"],
-  command: /^(ping|test)$/i,
+	// Plugin metadata
+	help: ["ping", "test"],
+	tags: ["tools"],
+	command: /^(ping|test)$/i,
 
-  // Main plugin logic
-  run: async (m, { conn }) => {
-    try {
-      const startTime = Date.now();
-      await conn.reply(m.chat, "🏓 Pong!", m);
-      const endTime = Date.now();
+	// Main plugin logic
+	run: async (m, { conn }) => {
+		try {
+			const startTime = Date.now();
+			await conn.reply(m.chat, "🏓 Pong!", m);
+			const endTime = Date.now();
 
-      await conn.reply(m.chat, `⚡ Response time: ${endTime - startTime}ms`, m);
-    } catch (error) {
-      return conn.reply(m.chat, `❌ Error: ${error.message}`, m);
-    }
-  },
+			await conn.reply(
+				m.chat,
+				`⚡ Response time: ${endTime - startTime}ms`,
+				m
+			);
+		} catch (error) {
+			return conn.reply(m.chat, `❌ Error: ${error.message}`, m);
+		}
+	},
 
-  // Plugin permissions
-  group: false, // Works in groups
-  admin: false, // Requires admin
-  limit: false, // Uses command limit
-  premium: false, // Premium only
-  botAdmin: false, // Bot needs admin
-  owner: false, // Owner only
+	// Plugin permissions
+	group: false, // Works in groups
+	admin: false, // Requires admin
+	limit: false, // Uses command limit
+	premium: false, // Premium only
+	botAdmin: false, // Bot needs admin
+	owner: false, // Owner only
 };
 ```
 
@@ -284,17 +290,17 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  async before(m, { conn }) {
-    try {
-      // Pre-processing logic
-      if (m.text && m.text.includes("hello")) {
-        await conn.reply(m.chat, "👋 Hello there!", m);
-      }
-    } catch (error) {
-      console.error("Event handler error:", error);
-    }
-    return true;
-  },
+	async before(m, { conn }) {
+		try {
+			// Pre-processing logic
+			if (m.text && m.text.includes("hello")) {
+				await conn.reply(m.chat, "👋 Hello there!", m);
+			}
+		} catch (error) {
+			console.error("Event handler error:", error);
+		}
+		return true;
+	},
 };
 ```
 
@@ -304,23 +310,23 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  apps: [
-    {
-      name: "yoshida-bot",
-      script: "./index.js",
-      instances: 1,
-      autorestart: true,
-      watch: false,
-      max_memory_restart: "1G",
-      node_args: "--max-old-space-size=2048",
-      env: {
-        NODE_ENV: "production",
-      },
-      env_development: {
-        NODE_ENV: "development",
-      },
-    },
-  ],
+	apps: [
+		{
+			name: "yoshida-bot",
+			script: "./index.js",
+			instances: 1,
+			autorestart: true,
+			watch: false,
+			max_memory_restart: "1G",
+			node_args: "--max-old-space-size=2048",
+			env: {
+				NODE_ENV: "production",
+			},
+			env_development: {
+				NODE_ENV: "development",
+			},
+		},
+	],
 };
 ```
 
@@ -369,102 +375,104 @@ const postgreSQLConfig = {
 const { Pool } = require("pg");
 
 const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST,
-  database: process.env.POSTGRES_DATABASE,
-  password: process.env.POSTGRES_PASSWORD,
-  port: process.env.POSTGRES_PORT,
-  ssl: {
-    rejectUnauthorized: true,
-    ca: process.env.POSTGRES_SSL.replace(/"""/g, ""),
-  },
+	user: process.env.POSTGRES_USER,
+	host: process.env.POSTGRES_HOST,
+	database: process.env.POSTGRES_DATABASE,
+	password: process.env.POSTGRES_PASSWORD,
+	port: process.env.POSTGRES_PORT,
+	ssl: {
+		rejectUnauthorized: true,
+		ca: process.env.POSTGRES_SSL.replace(/"""/g, ""),
+	},
 });
 
 // Local JSON storage
 class Local {
-  /**
-   * Initializes the LocalDB instance with the provided file path.
-   * @param {string} [filePath] - The path to the JSON file where the database will be stored. Defaults to 'database.json'.
-   */
-  constructor(filePath) {
-    this.filePath = filePath ? filePath + ".json" : process.env.DATABASE_NAME;
-    this.queue = [];
-    this.initDB();
-  }
+	/**
+	 * Initializes the LocalDB instance with the provided file path.
+	 * @param {string} [filePath] - The path to the JSON file where the database will be stored. Defaults to 'database.json'.
+	 */
+	constructor(filePath) {
+		this.filePath = filePath
+			? filePath + ".json"
+			: process.env.DATABASE_NAME;
+		this.queue = [];
+		this.initDB();
+	}
 
-  /**
-   * Initializes the database by checking if the file exists.
-   * If the file does not exist, it creates an empty JSON file.
-   * @returns {Promise<void>}
-   */
-  initDB = async () => {
-    try {
-      await fs.access(this.filePath);
-    } catch (err) {
-      await this.write({});
-    }
-  };
+	/**
+	 * Initializes the database by checking if the file exists.
+	 * If the file does not exist, it creates an empty JSON file.
+	 * @returns {Promise<void>}
+	 */
+	initDB = async () => {
+		try {
+			await fs.access(this.filePath);
+		} catch (err) {
+			await this.write({});
+		}
+	};
 
-  /**
-   * Validates if the provided data is a valid JSON object.
-   * @param {any} data - The data to be validated.
-   * @returns {boolean} - Returns true if the data is valid JSON, otherwise false.
-   */
-  validateJSON = (data) => {
-    try {
-      JSON.stringify(data, null);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  };
+	/**
+	 * Validates if the provided data is a valid JSON object.
+	 * @param {any} data - The data to be validated.
+	 * @returns {boolean} - Returns true if the data is valid JSON, otherwise false.
+	 */
+	validateJSON = (data) => {
+		try {
+			JSON.stringify(data, null);
+			return true;
+		} catch (err) {
+			return false;
+		}
+	};
 
-  /**
-   * Adds data to the internal queue to be saved later.
-   * @param {object} data - The data to be added to the queue.
-   */
-  enqueue = (data) => this.queue.push(data);
+	/**
+	 * Adds data to the internal queue to be saved later.
+	 * @param {object} data - The data to be added to the queue.
+	 */
+	enqueue = (data) => this.queue.push(data);
 
-  /**
-   * Write the valid data from the queue to the file.
-   * If the data is valid JSON, it will be written to the file.
-   * @param {object} data - The data to be saved to the file.
-   * @returns {Promise<void>}
-   */
-  write = async (data) => {
-    this.enqueue(data);
+	/**
+	 * Write the valid data from the queue to the file.
+	 * If the data is valid JSON, it will be written to the file.
+	 * @param {object} data - The data to be saved to the file.
+	 * @returns {Promise<void>}
+	 */
+	write = async (data) => {
+		this.enqueue(data);
 
-    const validData = this.queue.filter(this.validateJSON);
-    this.queue = [];
+		const validData = this.queue.filter(this.validateJSON);
+		this.queue = [];
 
-    if (validData.length > 0) {
-      try {
-        await fs.writeFile(
-          this.filePath,
-          JSON.stringify(validData[0], null),
-          "utf8",
-        );
-      } catch (err) {
-        console.log(`Failed to save data: ${err.message}`);
-      }
-    } else {
-      console.log("No valid data to save");
-    }
-  };
+		if (validData.length > 0) {
+			try {
+				await fs.writeFile(
+					this.filePath,
+					JSON.stringify(validData[0], null),
+					"utf8"
+				);
+			} catch (err) {
+				console.log(`Failed to save data: ${err.message}`);
+			}
+		} else {
+			console.log("No valid data to save");
+		}
+	};
 
-  /**
-   * Read the data from the JSON file and returns it.
-   * @returns {Promise<object|null>} - The parsed data from the file, or null if an error occurred.
-   */
-  read = async () => {
-    try {
-      const data = await fs.readFile(this.filePath, "utf8");
-      return JSON.parse(data);
-    } catch (err) {
-      console.log(`Failed to fetch data: ${err.message}`);
-      return null;
-    }
-  };
+	/**
+	 * Read the data from the JSON file and returns it.
+	 * @returns {Promise<object|null>} - The parsed data from the file, or null if an error occurred.
+	 */
+	read = async () => {
+		try {
+			const data = await fs.readFile(this.filePath, "utf8");
+			return JSON.parse(data);
+		} catch (err) {
+			console.log(`Failed to fetch data: ${err.message}`);
+			return null;
+		}
+	};
 }
 ```
 
