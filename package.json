@@ -29,7 +29,7 @@
 		"awesome-phonenumber": "^7.6.0",
 		"chokidar": "^4.0.3",
 		"jimp": "^1.6.0",
-		"link-preview-js": "^3.0.12",
+		"link-preview-js": "^4.0.0",
 		"module-alias": "^2.2.3",
 		"node-cache": "^5.1.2",
 		"node-cron": "^3.0.3",
