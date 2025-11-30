@@ -32,7 +32,7 @@
 		"link-preview-js": "^4.0.0",
 		"module-alias": "^2.2.3",
 		"node-cache": "^5.1.2",
-		"node-cron": "^3.0.3",
+		"node-cron": "^4.2.1",
 		"node-webpmux": "^3.2.0",
 		"postgres-baileys": "^1.5.0",
 		"syntax-error": "1.4.0",
