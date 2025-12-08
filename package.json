@@ -27,7 +27,7 @@
 		"@google/generative-ai": "^0.24.0",
 		"@whiskeysockets/baileys": "npm:baileys-mod",
 		"awesome-phonenumber": "^7.6.0",
-		"chokidar": "^4.0.3",
+		"chokidar": "^5.0.0",
 		"jimp": "^1.6.0",
 		"link-preview-js": "^4.0.0",
 		"module-alias": "^2.2.3",
