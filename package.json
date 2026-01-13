@@ -26,7 +26,7 @@
 	"dependencies": {
 		"@google/generative-ai": "^0.24.0",
 		"@whiskeysockets/baileys": "npm:baileys-mod",
-		"awesome-phonenumber": "^2.64.0",
+		"awesome-phonenumber": "^7.6.0",
 		"chokidar": "^4.0.3",
 		"jimp": "^1.6.0",
 		"link-preview-js": "^3.0.12",
